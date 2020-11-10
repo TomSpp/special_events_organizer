@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}OrganizeIt{% endblock %}
+
+{% block content %}
+    <h3>Ostatnio dodane oferty:</h3>
+    {% for offer in offers %}
+        <p>
+            {{ offer }}
+        </p>
+    {% endfor %}
+{% endblock %}
