@@ -18,3 +18,16 @@ def offer_list(request):
     offers.sort(key=lambda r: r.added, reverse=True)
 
     return render(request, 'main_page/offer_list.html', {'offers': offers})
+
+
+def offer_detail(request, id, name):
+    catering = Catering.objects.filter(id=id, name=name)
+    if len(catering) == 0:
+        local = Local.objects.filter(id=id, name=name)
+        if len(local) != 0:
+            return render(request, 'main_page/local_detail.html', {'local': local})
+        else:
+            other_offer = OtherOffer.objects.filter(id=id, name=name)
+            return render(request, 'main_page/other_offer_detail.html', {'other_offer': other_offer})
+
+    return render(request, 'main_page/catering_detail.html', {'catering': catering})

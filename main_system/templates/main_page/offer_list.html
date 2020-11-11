@@ -12,6 +12,9 @@
             {% if offer.contact.email %}
                 {{ offer.contact.email }}
             {% endif %}
+            <a href="{{ offer.get_absolute_url }}">
+                Szczegóły
+            </a>
         </p>
     {% endfor %}
 {% endblock %}

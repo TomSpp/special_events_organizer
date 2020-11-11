@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Location(models.Model):
@@ -39,6 +40,9 @@ class Catering(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    def get_absolute_url(self):
+        return reverse('main_system:offer_detail', args=[self.id, self.name])
+
     def __str__(self):
         return self.name
 
@@ -50,6 +54,9 @@ class Local(models.Model):
     name = models.CharField(max_length=100)
     added = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return reverse('main_system:offer_detail', args=[self.id, self.name])
 
     def __str__(self):
         return self.name
@@ -74,6 +81,9 @@ class OtherOffer(models.Model):
     basic_offer = models.CharField(max_length=1000, null=True, blank=True)
     added = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return reverse('main_system:offer_detail', args=[self.id, self.name])
 
     def __str__(self):
         return self.name
