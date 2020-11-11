@@ -25,6 +25,7 @@ class Contact(models.Model):
             string_website = ""
         if string_email is None:
             string_email = ""
+
         return self.phone_number + " " + string_website + " " + string_email
 
 

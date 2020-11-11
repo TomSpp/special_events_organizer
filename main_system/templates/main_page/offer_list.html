@@ -1,12 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}OrganizeIt{% endblock %}
-
 {% block content %}
     <h3>Ostatnio dodane oferty:</h3>
     {% for offer in offers %}
         <p>
-            {{ offer }}
+            {{ offer }}<br>
+            Tel. {{ offer.contact.phone_number }} <br>
+            {% if offer.contact.website %}
+                {{ offer.contact.website }}<br>
+            {% endif %}
+            {% if offer.contact.email %}
+                {{ offer.contact.email }}
+            {% endif %}
         </p>
     {% endfor %}
 {% endblock %}

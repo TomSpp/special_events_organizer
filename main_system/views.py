@@ -15,4 +15,6 @@ def offer_list(request):
     for other_offer in other_offers:
         offers.append(other_offer)
 
+    offers.sort(key=lambda r: r.added, reverse=True)
+
     return render(request, 'main_page/offer_list.html', {'offers': offers})
