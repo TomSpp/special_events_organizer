@@ -1,5 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-To jest lokal.
+    <h1>{{ local.name }}</h1>
+    <h2>{{ local.location.street }} {{ local.location.local_number}} {{ local.location.town }}</h2>
+
+    <p>
+        {% if local.catering is not None %}
+            W tym lokalu dostępny jest tylko i wyłącznie katering {{ local.catering.name }}.
+        {% endif %}
+    </p>
+
+    Dostępne sale w lokalu:<br>
+    {% for room in rooms %}
+        <p>
+            {{ forloop.counter }}. Pojemność sali: {{ room.max_people }} osób,
+            {% if room.type_of_parquet is not None %}
+                {{ room.type_of_parquet }},
+            {% endif %}
+            {% if room.air_conditioned is not None %}
+                {% if room.air_conditioned is True %}
+                    klimatyzacja,
+                {% else %}
+                    brak klimatyzacji,
+                {% endif %}
+            {% endif %}
+            koszt wynajęcia: {{ room.cost }} zł.
+        </p>
+    {% endfor %}
+    <p>
+        {% if local.contact.website is not None %}
+            Więcej informacji pod adresem {{ local.contact.website }}.
+        {% endif %}
+    </p>
+    <p>Numer telefonu: {{ local.contact.phone_number }}</p>
+    <p>
+        {% if local.contact.email is not None %}
+            Adres e-mail: {{ local.contact.email }}
+        {% endif %}
+    </p>
 {% endblock %}

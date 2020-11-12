@@ -1,5 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-To jest inna oferta.
+    <h1>{{ other_offer.name }}</h1>
+    <h2>{{ other_offer.location.street }} {{ other_offer.location.local_number}} {{ other_offer.location.town }}</h2>
+
+    <p>
+        {% if catering.basic_offer is not None %}
+            Oferta podstawowa:<br>
+            {{ other_offer.basic_offer }}
+        {% endif %}
+    </p>
+    <p>Koszt oferty podstawowej: {{ other_offer.min_cost }}.</p>
+
+    <p>
+        {% if other_offer.contact.website is not None %}
+            Więcej informacji pod adresem {{ other_offer.contact.website }}.
+        {% endif %}
+    </p>
+    <p>Numer telefonu: {{ other_offer.contact.phone_number }}</p>
+    <p>
+        {% if other_offer.contact.email is not None %}
+            Adres e-mail: {{ other_offer.contact.email }}
+        {% endif %}
+    </p>
 {% endblock %}

@@ -1,5 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-To jest katering.
+    <h1>{{ catering.name }}</h1>
+    <h2>{{ catering.location.street }} {{ catering.location.local_number}} {{ catering.location.town }}</h2>
+
+    <p>
+        {% if catering.with_local_only %}
+            Ten katering jest ofertą jednego z lokali.
+        {% endif %}
+    </p>
+    <p>
+        {% if catering.basic_offer is not None %}
+            Oferta podstawowa:<br>
+            {{ catering.basic_offer }}
+        {% endif %}
+    </p>
+    <p>Koszt oferty podstawowej na jedną osobę: {{ catering.min_cost_per_person }}.</p>
+
+    <p>
+        {% if catering.contact.website is not None %}
+            Więcej informacji pod adresem {{ catering.contact.website }}.
+        {% endif %}
+    </p>
+    <p>Numer telefonu: {{ catering.contact.phone_number }}</p>
+    <p>
+        {% if catering.contact.email is not None %}
+            Adres e-mail: {{ catering.contact.email }}
+        {% endif %}
+    </p>
 {% endblock %}
