@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Local, Catering, OtherOffer, Room
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def offer_list(request):
@@ -16,8 +17,16 @@ def offer_list(request):
         offers.append(other_offer)
 
     offers.sort(key=lambda r: r.added, reverse=True)
+    paginator = Paginator(offers, 3)
+    page = request.GET.get('page')
+    try:
+        offers = paginator.page(page)
+    except PageNotAnInteger:
+        offers = paginator.page(1)
+    except EmptyPage:
+        offers = paginator.page(paginator.num_pages)
 
-    return render(request, 'main_page/offer_list.html', {'offers': offers})
+    return render(request, 'main_page/offer_list.html', {'page': page, 'offers': offers})
 
 
 def offer_detail(request, id, name):
