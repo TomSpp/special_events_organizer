@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <p>
+        Podaj miasto lub powiat, w którym chcesz zorganizować uroczystość:<br>
+        <form action="." method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <input type="submit" value="Filtruj">
+    </form>
+    </p>
+
     <h3>Ostatnio dodane oferty:</h3>
     {% for offer in offers %}
         <p>

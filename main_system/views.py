@@ -1,32 +1,89 @@
 from django.shortcuts import render
 from .models import Local, Catering, OtherOffer, Room
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .forms import FilterOffersForm
 
 
 def offer_list(request):
-    locals = Local.objects.all()
-    caterings = Catering.objects.all()
-    other_offers = OtherOffer.objects.all()
+    if request.method == 'GET':
+        form = FilterOffersForm()
 
-    offers = list()
-    for local in locals:
-        offers.append(local)
-    for catering in caterings:
-        offers.append(catering)
-    for other_offer in other_offers:
-        offers.append(other_offer)
+        locals = Local.objects.all()
+        caterings = Catering.objects.all()
+        other_offers = OtherOffer.objects.all()
+        offers = list()
 
-    offers.sort(key=lambda r: r.added, reverse=True)
-    paginator = Paginator(offers, 3)
-    page = request.GET.get('page')
-    try:
-        offers = paginator.page(page)
-    except PageNotAnInteger:
-        offers = paginator.page(1)
-    except EmptyPage:
-        offers = paginator.page(paginator.num_pages)
+        for local in locals:
+            offers.append(local)
+        for catering in caterings:
+            offers.append(catering)
+        for other_offer in other_offers:
+            offers.append(other_offer)
 
-    return render(request, 'main_page/offer_list.html', {'page': page, 'offers': offers})
+        offers.sort(key=lambda r: r.added, reverse=True)
+        paginator = Paginator(offers, 3)
+        page = request.GET.get('page')
+        try:
+            offers = paginator.page(page)
+        except PageNotAnInteger:
+            offers = paginator.page(1)
+        except EmptyPage:
+            offers = paginator.page(paginator.num_pages)
+
+        return render(request, 'main_page/offer_list.html', {'page': page, 'offers': offers, 'form': form})
+
+    else:
+        form = FilterOffersForm(request.POST)
+        if form.is_valid():
+            offers = list()
+            filtered_location = form.cleaned_data['filtered_location']
+
+            locals = Local.objects.filter(location__district=filtered_location)
+            caterings = Catering.objects.filter(location__district=filtered_location)
+            other_offers = OtherOffer.objects.filter(location__district=filtered_location)
+
+            for local in locals:
+                offers.append(local)
+            for catering in caterings:
+                offers.append(catering)
+            for other_offer in other_offers:
+                offers.append(other_offer)
+
+            if len(offers) == 0:
+                town_offers = list()
+                locals = Local.objects.filter(location__town=filtered_location)
+                caterings = Catering.objects.filter(location__town=filtered_location)
+                other_offers = OtherOffer.objects.filter(location__town=filtered_location)
+                for local in locals:
+                    town_offers.append(local)
+                for catering in caterings:
+                    town_offers.append(catering)
+                for other_offer in other_offers:
+                    town_offers.append(other_offer)
+
+                if len(town_offers):
+                    district = town_offers[0].location.district
+                    locals = Local.objects.filter(location__district=district)
+                    caterings = Catering.objects.filter(location__district=district)
+                    other_offers = OtherOffer.objects.filter(location__district=district)
+                    for local in locals:
+                        offers.append(local)
+                    for catering in caterings:
+                        offers.append(catering)
+                    for other_offer in other_offers:
+                        offers.append(other_offer)
+
+            offers.sort(key=lambda r: r.added, reverse=True)
+            paginator = Paginator(offers, 3)
+            page = request.GET.get('page')
+            try:
+                offers = paginator.page(page)
+            except PageNotAnInteger:
+                offers = paginator.page(1)
+            except EmptyPage:
+                offers = paginator.page(paginator.num_pages)
+
+            return render(request, 'main_page/offer_list.html', {'page': page, 'offers': offers, 'form': form})
 
 
 def offer_detail(request, id, name):
