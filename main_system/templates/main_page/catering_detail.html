@@ -28,4 +28,30 @@
             Adres e-mail: {{ catering.contact.email }}
         {% endif %}
     </p>
+
+
+    {% with comments.count as total_comments %}
+        <h4>
+            {{ total_comments }} komentarz{{ total_comments|pluralize:"y" }}
+        </h4>
+    {% endwith %}
+
+    {% for comment in comments %}
+        <p>
+            Użytkownik {{ comment.name }} skomentował {{ comment.created }}
+        </p>
+        {{ comment.body|linebreaks }}
+    {% empty %}
+        <p>Ta oferta nie ma jeszcze żadnych komentarzy.</p>
+    {% endfor %}
+    {% if new_comment %}
+        <p>Twój komentarz został dodany.</p>
+    {% else %}
+        <h4>Dodaj nowy komentarz</h4>
+        <form action="." method="post">
+            {{ comment_form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Dodaj komentarz"></p>
+        </form>
+    {% endif %}
 {% endblock %}

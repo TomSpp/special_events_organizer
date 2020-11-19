@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .models import Local, Catering, OtherOffer, Room
+from .models import Local, Catering, OtherOffer, Room, Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .forms import FilterOffersForm
+from .forms import FilterOffersForm, CommentForm
 
 
 def offer_list(request):
@@ -87,17 +87,51 @@ def offer_list(request):
 
 
 def offer_detail(request, id, name):
+    new_comment = None
+
     catering = Catering.objects.filter(id=id, name=name)
     if len(catering) == 0:
         local = Local.objects.filter(id=id, name=name)
-        if len(local) != 0:
-            local = local[0]
-            rooms = Room.objects.filter(local=local.id).order_by('max_people')
-            return render(request, 'main_page/local_detail.html', {'local': local, 'rooms': rooms})
-        else:
+        if len(local) == 0:
             other_offer = OtherOffer.objects.filter(id=id, name=name)
             other_offer = other_offer[0]
-            return render(request, 'main_page/other_offer_detail.html', {'other_offer': other_offer})
+            comments = other_offer.comments.filter(active=True)
+            if request.method == 'POST':
+                comment_form = CommentForm(data=request.POST)
+                if comment_form.is_valid():
+                    new_comment = comment_form.save(commit=False)
+                    new_comment.other_offer = other_offer
+                    new_comment.save()
+            else:
+                comment_form = CommentForm()
+            return render(request, 'main_page/other_offer_detail.html',
+                          {'other_offer': other_offer, 'comments': comments, 'comment_form': comment_form,
+                           'new_comment': new_comment})
+        else:
+            local = local[0]
+            rooms = Room.objects.filter(local=local.id).order_by('max_people')
+            comments = local.comments.filter(active=True)
+            if request.method == 'POST':
+                comment_form = CommentForm(data=request.POST)
+                if comment_form.is_valid():
+                    new_comment = comment_form.save(commit=False)
+                    new_comment.local = local
+                    new_comment.save()
+            else:
+                comment_form = CommentForm()
+            return render(request, 'main_page/local_detail.html',
+                          {'local': local, 'rooms': rooms, 'comments': comments, 'comment_form': comment_form,
+                           'new_comment': new_comment})
 
     catering = catering[0]
-    return render(request, 'main_page/catering_detail.html', {'catering': catering})
+    comments = catering.comments.filter(active=True)
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.catering = catering
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
+    return render(request, 'main_page/catering_detail.html', {'catering': catering, 'comments': comments,
+                                                              'comment_form': comment_form, 'new_comment': new_comment})
