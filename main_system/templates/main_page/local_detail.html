@@ -40,6 +40,9 @@
     </p>
 
 
+    <p>Tagi: {{ local.tags.all|join:", " }}</p>
+
+
     {% with comments.count as total_comments %}
         <h4>
             {{ total_comments }} komentarz{{ total_comments|pluralize:"y" }}

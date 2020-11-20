@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 
 class Location(models.Model):
@@ -10,8 +11,7 @@ class Location(models.Model):
     local_number = models.CharField(max_length=10)
 
     def __str__(self):
-        return self.street + " " + self.local_number + " " + self.town + ", powiat " + self.district +\
-               ", województwo " + self.voivodeship
+        return self.street + " " + self.local_number + " " + self.town
 
 
 class Contact(models.Model):
@@ -40,6 +40,8 @@ class Catering(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    tags = TaggableManager()
+
     def get_absolute_url(self):
         return reverse('main_system:offer_detail', args=[self.id, self.name])
 
@@ -54,6 +56,8 @@ class Local(models.Model):
     name = models.CharField(max_length=100)
     added = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    tags = TaggableManager()
 
     def get_absolute_url(self):
         return reverse('main_system:offer_detail', args=[self.id, self.name])
@@ -81,6 +85,8 @@ class OtherOffer(models.Model):
     basic_offer = models.CharField(max_length=1000, null=True, blank=True)
     added = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    tags = TaggableManager()
 
     def get_absolute_url(self):
         return reverse('main_system:offer_detail', args=[self.id, self.name])

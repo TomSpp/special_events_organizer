@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from .models import Local, Catering, OtherOffer, Room, Comment
+from django.shortcuts import render, get_object_or_404
+from .models import Local, Catering, OtherOffer, Room
+from taggit.models import Tag
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import FilterOffersForm, CommentForm
 
@@ -37,10 +38,12 @@ def offer_list(request):
         if form.is_valid():
             offers = list()
             filtered_location = form.cleaned_data['filtered_location']
+            filtered_event = form.cleaned_data['filtered_event']
+            tag = get_object_or_404(Tag, name=filtered_event)
 
-            locals = Local.objects.filter(location__district=filtered_location)
-            caterings = Catering.objects.filter(location__district=filtered_location)
-            other_offers = OtherOffer.objects.filter(location__district=filtered_location)
+            locals = Local.objects.filter(location__district=filtered_location, tags__name__in=[tag])
+            caterings = Catering.objects.filter(location__district=filtered_location, tags__name__in=[tag])
+            other_offers = OtherOffer.objects.filter(location__district=filtered_location, tags__name__in=[tag])
 
             for local in locals:
                 offers.append(local)
@@ -51,9 +54,9 @@ def offer_list(request):
 
             if len(offers) == 0:
                 town_offers = list()
-                locals = Local.objects.filter(location__town=filtered_location)
-                caterings = Catering.objects.filter(location__town=filtered_location)
-                other_offers = OtherOffer.objects.filter(location__town=filtered_location)
+                locals = Local.objects.filter(location__town=filtered_location, tags__name__in=[tag])
+                caterings = Catering.objects.filter(location__town=filtered_location, tags__name__in=[tag])
+                other_offers = OtherOffer.objects.filter(location__town=filtered_location, tags__name__in=[tag])
                 for local in locals:
                     town_offers.append(local)
                 for catering in caterings:
@@ -63,9 +66,9 @@ def offer_list(request):
 
                 if len(town_offers):
                     district = town_offers[0].location.district
-                    locals = Local.objects.filter(location__district=district)
-                    caterings = Catering.objects.filter(location__district=district)
-                    other_offers = OtherOffer.objects.filter(location__district=district)
+                    locals = Local.objects.filter(location__district=district, tags__name__in=[tag])
+                    caterings = Catering.objects.filter(location__district=district, tags__name__in=[tag])
+                    other_offers = OtherOffer.objects.filter(location__district=district, tags__name__in=[tag])
                     for local in locals:
                         offers.append(local)
                     for catering in caterings:

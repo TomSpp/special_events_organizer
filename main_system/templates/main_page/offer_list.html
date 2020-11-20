@@ -2,7 +2,8 @@
 
 {% block content %}
     <p>
-        Podaj miasto lub powiat, w którym chcesz zorganizować uroczystość:<br>
+        Wybierz uroczystość, jaką chcesz zorganizować, a następnie
+        podaj miasto lub powiat, w którym chcesz ją zorganizować:<br>
         <form action="." method="post">
         {{ form.as_p }}
         {% csrf_token %}
@@ -14,6 +15,7 @@
     {% for offer in offers %}
         <p>
             {{ offer }}<br>
+            {{ offer.location }} <br>
             Tel. {{ offer.contact.phone_number }} <br>
             {% if offer.contact.website %}
                 {{ offer.contact.website }}<br>
