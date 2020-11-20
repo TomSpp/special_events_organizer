@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'main_system.apps.MainSystemConfig',
+    'account.apps.AccountConfig',
     'taggit',
     
     'django.contrib.admin',
