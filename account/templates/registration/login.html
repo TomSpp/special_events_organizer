@@ -12,4 +12,5 @@
         <button name="submit">Zaloguj</button>
         <input type="hidden" name="next" value="{% url 'main_system:offer_list' %}"/>
     </form>
+    <p><a href="{% url 'account:password_reset' %}">Zapomniałeś hasła?</a> </p>
 {% endblock %}

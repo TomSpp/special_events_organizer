@@ -5,8 +5,8 @@
     <title>{% block title %}OrganizeIt{% endblock %}</title>
 </head>
 <body>
+    <a href="{% url 'main_system:offer_list' %}">Strona główna</a>
     {% if user.is_authenticated %}
-        <a href="{% url 'main_system:offer_list' %}">Strona główna</a>
         Witaj, {{ user.username }}.
         <a href="{% url 'account:password_change' %}">Zmień hasło</a>
         <a href="{% url 'account:logout' %}">Wyloguj</a>
