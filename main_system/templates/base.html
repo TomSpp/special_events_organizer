@@ -12,6 +12,7 @@
         <a href="{% url 'account:logout' %}">Wyloguj</a>
     {% else %}
         <a href="{% url 'account:login' %}">Zaloguj</a>
+        <a href="{% url 'account:register' %}">Zarejestruj</a>
     {% endif %}
     {% block content %}
     {% endblock %}
