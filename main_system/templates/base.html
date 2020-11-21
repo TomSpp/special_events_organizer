@@ -5,6 +5,12 @@
     <title>{% block title %}OrganizeIt{% endblock %}</title>
 </head>
 <body>
+    {% if user.is_authenticated %}
+        Witaj, {{ user.username }}.
+        <a href="{% url 'account:logout' %}">Wyloguj</a>
+    {% else %}
+        <a href="{% url 'account:login' %}">Zaloguj</a>
+    {% endif %}
     {% block content %}
     {% endblock %}
 </body>
