@@ -25,6 +25,11 @@
     </p>
 
 
+    <p>
+        <a href="{% url 'main_system:take_offer' other_offer.id other_offer.name %}">Dodaj do moich ofert</a>
+    </p>
+
+
     <p>Tagi: {{ other_offer.tags.all|join:", " }}</p>
 
 

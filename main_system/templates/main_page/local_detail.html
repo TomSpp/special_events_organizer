@@ -25,6 +25,8 @@
                 {% endif %}
             {% endif %}
             koszt wynajęcia: {{ room.cost }} zł.
+
+            <a href="{% url 'main_system:take_room_offer' local.id local.name room.id %}">Dodaj do moich ofert</a>
         </p>
     {% endfor %}
     <p>

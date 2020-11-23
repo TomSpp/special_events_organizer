@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p>
+        Oferta {{ offer }} została dodana do Twoich ofert. Obejrzyj je wszystkie lub wróć do wyszukiwania:<br>
+        <a href="#" onclick='history.go(-2)'>Cofnij do wyszukiwania</a><br>
+        <a href="{% url 'main_system:user_panel' %}">Moje oferty</a>
+    </p>
+{% endblock %}

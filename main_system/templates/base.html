@@ -5,15 +5,28 @@
     <title>{% block title %}OrganizeIt{% endblock %}</title>
 </head>
 <body>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">
+                    {{ message|safe }}
+                    <a href="#" class="close">x</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     <a href="{% url 'main_system:offer_list' %}">Strona główna</a>
     {% if user.is_authenticated %}
         Witaj, {{ user.username }}.
+        <a href="{% url 'main_system:user_panel' %}">Moje oferty</a>
         <a href="{% url 'account:password_change' %}">Zmień hasło</a>
         <a href="{% url 'account:logout' %}">Wyloguj</a>
     {% else %}
         <a href="{% url 'account:login' %}">Zaloguj</a>
         <a href="{% url 'account:register' %}">Zarejestruj</a>
     {% endif %}
+
     {% block content %}
     {% endblock %}
 </body>

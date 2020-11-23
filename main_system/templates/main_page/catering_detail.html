@@ -30,6 +30,11 @@
     </p>
 
 
+    <p>
+        <a href="{% url 'main_system:take_offer' catering.id catering.name %}">Dodaj do moich ofert</a>
+    </p>
+
+
     <p>Tagi: {{ catering.tags.all|join:", " }}</p>
 
 

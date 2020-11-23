@@ -73,6 +73,9 @@ class Room(models.Model):
     type_of_parquet = models.CharField(max_length=100, null=True, blank=True)
     air_conditioned = models.BooleanField(null=True, blank=True)
 
+    def get_absolute_url(self):
+        return reverse('main_system:take_room_offer', args=[self.local.id, self.local.name, self.id])
+
     def __str__(self):
         return self.local.__str__() + " - " + str(self.max_people) + " osób"
 
