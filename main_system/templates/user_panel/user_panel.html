@@ -17,6 +17,7 @@
             <a href="{{ room_offer.local.get_absolute_url }}">
                 Szczegóły
             </a>
+            <a href="{% url 'main_system:remove_room_offer' room_offer.id %}">Usuń</a>
         </p>
     {% endfor %}
 
@@ -34,6 +35,7 @@
             <a href="{{ offer.get_absolute_url }}">
                 Szczegóły
             </a>
+            <a href="{% url 'main_system:remove_offer' offer.id offer.name %}">Usuń</a>
         </p>
     {% endfor %}
 {% endblock %}

@@ -149,31 +149,89 @@ def take_room_offer(request, id, name, room_id):
     room = room[0]
     profile = Profile.objects.get(user=request.user)
     profile.rooms.add(room)
+
     return render(request, 'user_panel/offer_added.html', {'offer': room})
+
+
+def remove_room_offer(request, room_id):
+    profile = Profile.objects.get(user=request.user)
+    room = profile.rooms.get(id=room_id)
+    profile.rooms.remove(room)
+
+    rooms = profile.rooms.all()
+    caterings = profile.caterings.all()
+    other_offers = profile.other_offers.all()
+
+    offers = list()
+    room_offers = list()
+    for catering in caterings:
+        offers.append(catering)
+    for other_offer in other_offers:
+        offers.append(other_offer)
+    for room in rooms:
+        room_offers.append(room)
+
+    return render(request, 'user_panel/user_panel.html', {'offers': offers, 'room_offers': room_offers})
 
 
 def take_offer(request, id, name):
     catering = Catering.objects.filter(id=id, name=name)
     if len(catering) == 0:
-        local = Local.objects.filter(id=id, name=name)
-        if len(local) == 0:
-            other_offer = OtherOffer.objects.filter(id=id, name=name)
-            other_offer = other_offer[0]
-            profile = Profile.objects.get(user=request.user)
-            profile.other_offers.add(other_offer)
-            return render(request, 'user_panel/offer_added.html',
+        other_offer = OtherOffer.objects.filter(id=id, name=name)
+        other_offer = other_offer[0]
+        profile = Profile.objects.get(user=request.user)
+        profile.other_offers.add(other_offer)
+        return render(request, 'user_panel/offer_added.html',
                           {'offer': other_offer})
-        else:
-            local = local[0]
-            # rooms = Room.objects.filter(local=local.id).order_by('max_people')
-            profile = Profile.objects.get(user=request.user)
-            profile.locals.add(local)
-            return render(request, 'user_panel/offer_added.html', {'offer': local})
+
     catering = catering[0]
     profile = Profile.objects.get(user=request.user)
     profile.caterings.add(catering)
 
     return render(request, 'user_panel/offer_added.html', {'offer': catering})
+
+
+def remove_offer(request, id, name):
+    catering = Catering.objects.filter(id=id, name=name)
+    if len(catering) == 0:
+        other_offer = OtherOffer.objects.filter(id=id, name=name)
+        other_offer = other_offer[0]
+        profile = Profile.objects.get(user=request.user)
+        profile.other_offers.remove(other_offer)
+
+        rooms = profile.rooms.all()
+        caterings = profile.caterings.all()
+        other_offers = profile.other_offers.all()
+
+        offers = list()
+        room_offers = list()
+        for catering in caterings:
+            offers.append(catering)
+        for other_offer in other_offers:
+            offers.append(other_offer)
+        for room in rooms:
+            room_offers.append(room)
+
+        return render(request, 'user_panel/user_panel.html', {'offers': offers, 'room_offers': room_offers})
+
+    catering = catering[0]
+    profile = Profile.objects.get(user=request.user)
+    profile.caterings.remove(catering)
+
+    rooms = profile.rooms.all()
+    caterings = profile.caterings.all()
+    other_offers = profile.other_offers.all()
+
+    offers = list()
+    room_offers = list()
+    for catering in caterings:
+        offers.append(catering)
+    for other_offer in other_offers:
+        offers.append(other_offer)
+    for room in rooms:
+        room_offers.append(room)
+
+    return render(request, 'user_panel/user_panel.html', {'offers': offers, 'room_offers': room_offers})
 
 
 def user_panel(request):
