@@ -156,22 +156,13 @@ def take_room_offer(request, id, name, room_id):
 def remove_room_offer(request, room_id):
     profile = Profile.objects.get(user=request.user)
     room = profile.rooms.get(id=room_id)
-    profile.rooms.remove(room)
+    if request.method == 'POST':
+        profile.rooms.remove(room)
 
-    rooms = profile.rooms.all()
-    caterings = profile.caterings.all()
-    other_offers = profile.other_offers.all()
+        messages.success(request, 'Wybrana oferta została usunięta.')
+        return redirect('main_system:user_panel')
 
-    offers = list()
-    room_offers = list()
-    for catering in caterings:
-        offers.append(catering)
-    for other_offer in other_offers:
-        offers.append(other_offer)
-    for room in rooms:
-        room_offers.append(room)
-
-    return render(request, 'user_panel/user_panel.html', {'offers': offers, 'room_offers': room_offers})
+    return render(request, 'user_panel/confirm_removing_room_offer.html', {'room': room})
 
 
 def take_offer(request, id, name):
@@ -197,41 +188,21 @@ def remove_offer(request, id, name):
         other_offer = OtherOffer.objects.filter(id=id, name=name)
         other_offer = other_offer[0]
         profile = Profile.objects.get(user=request.user)
-        profile.other_offers.remove(other_offer)
+        if request.method == 'POST':
+            profile.other_offers.remove(other_offer)
+            messages.success(request, 'Wybrana oferta została usunięta.')
+            return redirect('main_system:user_panel')
 
-        rooms = profile.rooms.all()
-        caterings = profile.caterings.all()
-        other_offers = profile.other_offers.all()
-
-        offers = list()
-        room_offers = list()
-        for catering in caterings:
-            offers.append(catering)
-        for other_offer in other_offers:
-            offers.append(other_offer)
-        for room in rooms:
-            room_offers.append(room)
-
-        return render(request, 'user_panel/user_panel.html', {'offers': offers, 'room_offers': room_offers})
+        return render(request, 'user_panel/confirm_removing_offer.html', {'offer': other_offer})
 
     catering = catering[0]
     profile = Profile.objects.get(user=request.user)
-    profile.caterings.remove(catering)
+    if request.method == 'POST':
+        profile.caterings.remove(catering)
+        messages.success(request, 'Wybrana oferta została usunięta.')
+        return redirect('main_system:user_panel')
 
-    rooms = profile.rooms.all()
-    caterings = profile.caterings.all()
-    other_offers = profile.other_offers.all()
-
-    offers = list()
-    room_offers = list()
-    for catering in caterings:
-        offers.append(catering)
-    for other_offer in other_offers:
-        offers.append(other_offer)
-    for room in rooms:
-        room_offers.append(room)
-
-    return render(request, 'user_panel/user_panel.html', {'offers': offers, 'room_offers': room_offers})
+    return render(request, 'user_panel/confirm_removing_offer.html', {'offer': catering})
 
 
 def user_panel(request):
