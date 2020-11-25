@@ -15,8 +15,8 @@ class FilterOffersForm(forms.Form):
         ('WIECZÓR PANIEŃSKI/KAWALERSKI', 'WIECZÓR PANIEŃSKI/KAWALERSKI'),
     )
 
-    filtered_event = forms.ChoiceField(choices=EVENT_CHOICES, label='')
-    filtered_location = forms.CharField(max_length=50, label='')
+    filtered_event = forms.ChoiceField(choices=EVENT_CHOICES, label='Uroczystość')
+    filtered_location = forms.CharField(max_length=50, label='Lokalizacja')
 
 
 class CommentForm(forms.ModelForm):

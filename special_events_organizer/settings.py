@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'main_system.apps.MainSystemConfig',
     'account.apps.AccountConfig',
     'taggit',
+    'bootstrap4',
     
     'django.contrib.admin',
     'django.contrib.auth',
