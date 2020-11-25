@@ -8,6 +8,10 @@ from account.models import Profile
 from django.contrib import messages
 
 
+def main_page(request):
+    return render(request, 'main_page/main_page.html')
+
+
 def offer_list(request):
     if request.method == 'GET':
         form = FilterOffersForm()

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block page_header%}
+    <div class="jumbotron">
+        <h3>Zorganizuj wymarzoną uroczystość nie wychodząc z domu!</h3>
+
+        <p>
+            Określ rodzaj uroczystości, którą chcesz zorganizować, znajdź najlepszy lokal w okolicy i wybierz
+            najbardziej najatrakcyjniejszą obsługę.
+            Zarejestruj się, aby mieć dostęp do szczegółów, kompletować oferty,
+            szacować łączny koszt uroczystości lub dodawać komentarze
+            do wybranych ofert.
+        </p>
+
+        <a class="btn btn-lg btn-primary" href="{% url 'main_system:offer_list' %}"
+           role="button">Przejdź do wyszukiwania &raquo;</a>
+
+        <a class="btn btn-lg btn-primary" href="{% url 'account:register' %}"
+           role="button">Załóż konto &raquo;</a>
+    </div>
+
+
+{% endblock %}
+
+{% block content %}
+    <p>
+        Chcesz zamieścić ofertę swojej działalności w serwisie? Skontaktuj się z nami:<br>
+        e-mail: admin@serwis.pl<br>
+        telefon: 222444444
+    </p>
+{% endblock %}
