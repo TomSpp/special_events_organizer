@@ -22,7 +22,8 @@ class FilterOffersForm(forms.Form):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ('name', 'body')
+        fields = ['body']
+        labels = {'body': ''}
 
 
 class EstimationForm(forms.Form):

@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Local, Catering, OtherOffer, Room
 from taggit.models import Tag
@@ -91,6 +92,7 @@ def offer_list(request):
             return render(request, 'main_page/offer_list.html', {'page': page, 'offers': offers, 'form': form})
 
 
+@login_required
 def offer_detail(request, id, name):
     new_comment = None
 
@@ -120,6 +122,7 @@ def offer_detail(request, id, name):
                 comment_form = CommentForm(data=request.POST)
                 if comment_form.is_valid():
                     new_comment = comment_form.save(commit=False)
+                    new_comment.name = request.user.username
                     new_comment.local = local
                     new_comment.save()
             else:
@@ -142,6 +145,7 @@ def offer_detail(request, id, name):
                                                               'comment_form': comment_form, 'new_comment': new_comment})
 
 
+@login_required
 def take_room_offer(request, id, name, room_id):
     local = Local.objects.filter(id=id, name=name)
     local = local[0]
@@ -153,6 +157,7 @@ def take_room_offer(request, id, name, room_id):
     return render(request, 'user_panel/offer_added.html', {'offer': room})
 
 
+@login_required
 def remove_room_offer(request, room_id):
     profile = Profile.objects.get(user=request.user)
     room = profile.rooms.get(id=room_id)
@@ -165,6 +170,7 @@ def remove_room_offer(request, room_id):
     return render(request, 'user_panel/confirm_removing_room_offer.html', {'room': room})
 
 
+@login_required
 def take_offer(request, id, name):
     catering = Catering.objects.filter(id=id, name=name)
     if len(catering) == 0:
@@ -182,6 +188,7 @@ def take_offer(request, id, name):
     return render(request, 'user_panel/offer_added.html', {'offer': catering})
 
 
+@login_required
 def remove_offer(request, id, name):
     catering = Catering.objects.filter(id=id, name=name)
     if len(catering) == 0:
@@ -205,6 +212,7 @@ def remove_offer(request, id, name):
     return render(request, 'user_panel/confirm_removing_offer.html', {'offer': catering})
 
 
+@login_required
 def user_panel(request):
     profile = Profile.objects.get(user=request.user)
     rooms = profile.rooms.all()
@@ -223,8 +231,9 @@ def user_panel(request):
     return render(request, 'user_panel/user_panel.html', {'offers': offers, 'room_offers': room_offers})
 
 
+@login_required
 def estimate_costs(request):
-    profile = Profile.objects.get()
+    profile = Profile.objects.get(user=request.user)
     rooms = profile.rooms.all()
     caterings = profile.caterings.all()
     other_offers = profile.other_offers.all()
@@ -234,7 +243,6 @@ def estimate_costs(request):
         form = EstimationForm(data=request.POST)
         if form.is_valid():
             people_amount = form.cleaned_data['people_amount']
-            profile = Profile.objects.get(user=request.user)
             rooms = profile.rooms.all()
             caterings = profile.caterings.all()
             other_offers = profile.other_offers.all()
