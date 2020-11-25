@@ -11,4 +11,5 @@ urlpatterns = [
     path('remove_offer/<int:id>/<str:name>/', views.remove_offer, name='remove_offer'),
     path('<int:id>/<str:name>/take_offer/', views.take_offer, name='take_offer'),
     path('user_panel/', views.user_panel, name='user_panel'),
+    path('estimate_costs/', views.estimate_costs, name='estimate_costs'),
 ]

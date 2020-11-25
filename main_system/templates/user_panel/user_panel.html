@@ -38,4 +38,8 @@
             <a href="{% url 'main_system:remove_offer' offer.id offer.name %}">Usuń</a>
         </p>
     {% endfor %}
+
+    <p>
+        <a href="{% url 'main_system:estimate_costs' %}">Oszacuj koszty</a>
+    </p>
 {% endblock %}

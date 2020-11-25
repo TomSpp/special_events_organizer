@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Local, Catering, OtherOffer, Room
 from taggit.models import Tag
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .forms import FilterOffersForm, CommentForm
+from .forms import FilterOffersForm, CommentForm, EstimationForm
 from account.models import Profile
 from django.contrib import messages
 
@@ -221,3 +221,46 @@ def user_panel(request):
         room_offers.append(room)
 
     return render(request, 'user_panel/user_panel.html', {'offers': offers, 'room_offers': room_offers})
+
+
+def estimate_costs(request):
+    profile = Profile.objects.get()
+    rooms = profile.rooms.all()
+    caterings = profile.caterings.all()
+    other_offers = profile.other_offers.all()
+    final_cost = None
+
+    if request.method == 'POST':
+        form = EstimationForm(data=request.POST)
+        if form.is_valid():
+            people_amount = form.cleaned_data['people_amount']
+            profile = Profile.objects.get(user=request.user)
+            rooms = profile.rooms.all()
+            caterings = profile.caterings.all()
+            other_offers = profile.other_offers.all()
+
+            caterings_costs = 0
+            other_offer_costs = 0
+            rooms_costs = 0
+
+            for catering in caterings:
+                caterings_costs += catering.min_cost_per_person
+            for other_offer in other_offers:
+                other_offer_costs += other_offer.min_cost
+            for room in rooms:
+                rooms_costs += room.cost
+
+            final_cost = people_amount * caterings_costs + other_offer_costs + rooms_costs
+
+            return render(request, 'user_panel/costs_counting.html', {'rooms': rooms,
+                                                                      'caterings': caterings,
+                                                                      'other_offers': other_offers,
+                                                                      'form': form,
+                                                                      'final_cost': final_cost})
+    else:
+        form = EstimationForm()
+        return render(request, 'user_panel/costs_counting.html', {'rooms': rooms,
+                                                                  'caterings': caterings,
+                                                                  'other_offers': other_offers,
+                                                                  'form': form,
+                                                                  'final_cost': final_cost})

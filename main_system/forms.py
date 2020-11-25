@@ -23,3 +23,7 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('name', 'body')
+
+
+class EstimationForm(forms.Form):
+    people_amount = forms.IntegerField(max_value=1000, label='')
