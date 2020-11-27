@@ -11,24 +11,17 @@
     </p>
 
     Dostępne sale w lokalu:<br>
-    {% for room in rooms %}
+    {% for offer in offers %}
         <p>
-            {{ forloop.counter }}. Pojemność sali: {{ room.max_people }} osób,
-            {% if room.type_of_parquet is not None %}
-                {{ room.type_of_parquet }},
+            {{ offer.name }}<br>
+            {% if offer.offer_description %}
+                {{ offer.offer_description }}<br>
             {% endif %}
-            {% if room.air_conditioned is not None %}
-                {% if room.air_conditioned is True %}
-                    klimatyzacja,
-                {% else %}
-                    brak klimatyzacji,
-                {% endif %}
-            {% endif %}
-            koszt wynajęcia: {{ room.cost }} zł.
-
-            <a href="{% url 'main_system:take_room_offer' local.id local.name room.id %}">Dodaj do moich ofert</a>
+            Cena: {{ offer.cost }} zł<br>
+            <a href="{% url 'main_system:take_offer' offer.id %}">Dodaj do moich ofert</a>
         </p>
     {% endfor %}
+
     <p>
         {% if local.contact.website is not None %}
             Więcej informacji pod adresem {{ local.contact.website }}.

@@ -12,7 +12,6 @@ class FilterOffersForm(forms.Form):
         ('POGRZEB', 'POGRZEB'),
         ('PRZYJĘCIE', 'PRZYJĘCIE'),
         ('WESELE', 'WESELE'),
-        ('WIECZÓR PANIEŃSKI/KAWALERSKI', 'WIECZÓR PANIEŃSKI/KAWALERSKI'),
     )
 
     filtered_event = forms.ChoiceField(choices=EVENT_CHOICES, label='Uroczystość')

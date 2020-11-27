@@ -9,13 +9,20 @@
             Ten katering jest ofertą jednego z lokali.
         {% endif %}
     </p>
-    <p>
-        {% if catering.basic_offer is not None %}
-            Oferta podstawowa:<br>
-            {{ catering.basic_offer }}
-        {% endif %}
-    </p>
-    <p>Koszt oferty podstawowej na jedną osobę: {{ catering.min_cost_per_person }}.</p>
+
+
+    Oferty:
+    {% for offer in offers %}
+        <p>
+            {{ offer.name }}<br>
+            {% if offer.offer_description %}
+                {{ offer.offer_description }}<br>
+            {% endif %}
+            Cena za jedną osobę: {{ offer.cost }} zł<br>
+            <a href="{% url 'main_system:take_offer' offer.id %}">Dodaj do moich ofert</a>
+        </p>
+    {% endfor %}
+
 
     <p>
         {% if catering.contact.website is not None %}
@@ -27,11 +34,6 @@
         {% if catering.contact.email is not None %}
             Adres e-mail: {{ catering.contact.email }}
         {% endif %}
-    </p>
-
-
-    <p>
-        <a href="{% url 'main_system:take_offer' catering.id catering.name %}">Dodaj do moich ofert</a>
     </p>
 
 
@@ -47,7 +49,7 @@
         </p>
         {{ comment.body|linebreaks }}
     {% empty %}
-        <p>Ta oferta nie ma jeszcze żadnych komentarzy.</p>
+        <p>Nie ma jeszcze żadnych komentarzy.</p>
     {% endfor %}
     {% if new_comment %}
         <p>Twój komentarz został dodany.</p>

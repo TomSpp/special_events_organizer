@@ -3,17 +3,9 @@
 {% block content %}
     <p>
         Twoje oferty wraz z kosztami:<br>
-        {% for room in rooms %}
-            {{ room.local }} {{ room.cost }} zł <br>
-        {% endfor %}
-        {% for catering in caterings %}
-            {{ catering }} {{ catering.min_cost_per_person }} zł od osoby <br>
-        {% endfor %}
-        {% for other_offer in other_offers %}
-            {{ other_offer }} {{ other_offer.min_cost }} zł <br>
-        {% endfor %}
+
     </p>
-    {% if final_cost is None %}
+    {% if final_cost == 0 %}
         Podaj przewidywaną liczbę osób biorących udział w uroczystości:
         <form action="." method="post">
             {{ form.as_p }}

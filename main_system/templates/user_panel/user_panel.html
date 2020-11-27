@@ -2,41 +2,28 @@
 
 {% block content %}
     <h3>Twoje oferty:</h3>
-    {% for room_offer in room_offers %}
-        <p>
-            {{ room_offer.local }}<br>
-            {{ room_offer.local.location }}<br>
-            Tel. {{ room_offer.local.contact.phone_number }} <br>
-            {% if room_offer.local.contact.website %}
-                {{ room_offer.local.contact.website }}<br>
-            {% endif %}
-            {% if room_offer.local.contact.email %}
-                {{ room_offer.local.contact.email }}
-            {% endif %}<br>
-            {{ room_offer.max_people }}<br>
-            <a href="{{ room_offer.local.get_absolute_url }}">
-                Szczegóły
-            </a>
-            <a href="{% url 'main_system:remove_room_offer' room_offer.id %}">Usuń</a>
-        </p>
-    {% endfor %}
-
     {% for offer in offers %}
-        <p>
-            {{ offer }}<br>
-            {{ offer.location }} <br>
-            Tel. {{ offer.contact.phone_number }} <br>
-            {% if offer.contact.website %}
-                {{ offer.contact.website }}<br>
-            {% endif %}
-            {% if offer.contact.email %}
-                {{ offer.contact.email }}
-            {% endif %}<br>
-            <a href="{{ offer.get_absolute_url }}">
-                Szczegóły
-            </a>
-            <a href="{% url 'main_system:remove_offer' offer.id offer.name %}">Usuń</a>
-        </p>
+        {% if offer.local %}
+            {{ offer.local.name }}<br>
+            {{ offer.local.location }}<br>
+            {{ offer.local.contact }}<br>
+        {% elif offer.catering %}
+            {{ offer.catering.name }}<br>
+            {{ offer.catering.location }} <br>
+            {{ offer.catering.contact }}<br>
+        {% else %}
+            {{ offer.other_provider.name }}<br>
+            {{ offer.other_provider.location }} <br>
+            {{ offer.other_provider.contact }}<br>
+        {% endif %}
+            <p>
+                {{ offer }}<br>
+                {% if offer.offer_description %}
+                    {{ offer.offer_description }}<br>
+                {% endif %}
+                Koszt: {{ offer.cost }} zł.<br>
+                <a href="{% url 'main_system:remove_offer' offer.id %}">Usuń ofertę</a>
+            </p>
     {% endfor %}
 
     <p>

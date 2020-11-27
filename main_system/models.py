@@ -35,15 +35,14 @@ class Catering(models.Model):
     contact = models.OneToOneField(Contact, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     with_local_only = models.BooleanField(default=False)
-    min_cost_per_person = models.DecimalField(max_digits=10, decimal_places=2)
-    basic_offer = models.CharField(max_length=1000, null=True, blank=True)
     added = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(max_length=100, unique_for_date='added')
 
     tags = TaggableManager()
 
     def get_absolute_url(self):
-        return reverse('main_system:offer_detail', args=[self.id, self.name])
+        return reverse('main_system:offer_detail', args=[self.added.year, self.added.month,
+                                                         self.added.day, self.slug])
 
     def __str__(self):
         return self.name
@@ -55,53 +54,66 @@ class Local(models.Model):
     catering = models.OneToOneField(Catering, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100)
     added = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(max_length=100, unique_for_date='added')
 
     tags = TaggableManager()
 
     def get_absolute_url(self):
-        return reverse('main_system:offer_detail', args=[self.id, self.name])
+        return reverse('main_system:offer_detail', args=[self.added.year, self.added.month,
+                                                         self.added.day, self.slug])
 
     def __str__(self):
         return self.name
 
 
-class Room(models.Model):
-    local = models.ForeignKey(Local, on_delete=models.CASCADE)
-    max_people = models.IntegerField()
-    cost = models.DecimalField(max_digits=10, decimal_places=2)
-    type_of_parquet = models.CharField(max_length=100, null=True, blank=True)
-    air_conditioned = models.BooleanField(null=True, blank=True)
-
-    def get_absolute_url(self):
-        return reverse('main_system:take_room_offer', args=[self.local.id, self.local.name, self.id])
-
-    def __str__(self):
-        return self.local.__str__() + " - " + str(self.max_people) + " osób"
-
-
-class OtherOffer(models.Model):
+class OtherProvider(models.Model):
     location = models.OneToOneField(Location, on_delete=models.CASCADE)
     contact = models.OneToOneField(Contact, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    min_cost = models.DecimalField(max_digits=10, decimal_places=2)
-    basic_offer = models.CharField(max_length=1000, null=True, blank=True)
     added = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(max_length=100, unique_for_date='added')
 
     tags = TaggableManager()
 
     def get_absolute_url(self):
-        return reverse('main_system:offer_detail', args=[self.id, self.name])
+        return reverse('main_system:offer_detail', args=[self.added.year, self.added.month,
+                                                         self.added.day, self.slug])
 
     def __str__(self):
         return self.name
+
+
+class Offer(models.Model):
+    local = models.ForeignKey(Local, on_delete=models.CASCADE, blank=True, null=True)
+    catering = models.ForeignKey(Catering, on_delete=models.CASCADE, blank=True, null=True)
+    other_provider = models.ForeignKey(OtherProvider, on_delete=models.CASCADE, blank=True, null=True)
+    max_people = models.IntegerField(blank=True, null=True)
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
+    name = models.CharField(max_length=100)
+    offer_description = models.TextField(blank=True, null=True)
+    added = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(max_length=100, unique_for_date='added')
+
+    def get_absolute_url(self):
+        return reverse('main_system:take_room_offer', args=[self.added.year, self.added.month,
+                                                            self.added.day, self.slug])
+
+    def __str__(self):
+        if self.local is not None:
+            provider_name = self.local.name
+        elif self.catering is not None:
+            provider_name = self.catering.name
+        else:
+            provider_name = self.other_provider.name
+        return provider_name + " - " + str(self.name)
 
 
 class Comment(models.Model):
     catering = models.ForeignKey(Catering, on_delete=models.CASCADE, null=True, blank=True, related_name='comments')
     local = models.ForeignKey(Local, on_delete=models.CASCADE, null=True, blank=True, related_name='comments')
-    other_offer = models.ForeignKey(OtherOffer, on_delete=models.CASCADE, null=True, blank=True, related_name='comments')
+    other_provider = models.ForeignKey(OtherProvider, on_delete=models.CASCADE, null=True, blank=True,
+                                       related_name='comments')
     name = models.CharField(max_length=50)
     body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)

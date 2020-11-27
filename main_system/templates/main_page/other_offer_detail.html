@@ -1,33 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ other_offer.name }}</h1>
-    <h2>{{ other_offer.location.street }} {{ other_offer.location.local_number}} {{ other_offer.location.town }}</h2>
+    <h1>{{ other_provider.name }}</h1>
+    <h2>{{ other_provider.location.street }} {{ other_provider.location.local_number}}
+        {{ other_provider.location.town }}</h2>
+
+    Oferty:
+    {% for offer in offers %}
+        <p>
+            {{ offer.name }}<br>
+            {% if offer.offer_description %}
+                {{ offer.offer_description }}<br>
+            {% endif %}
+            Cena: {{ offer.cost }} zł<br>
+            <a href="{% url 'main_system:take_offer' offer.id %}">Dodaj do moich ofert</a>
+        </p>
+    {% endfor %}
 
     <p>
-        {% if catering.basic_offer is not None %}
-            Oferta podstawowa:<br>
-            {{ other_offer.basic_offer }}
+        {% if other_provider.contact.website is not None %}
+            Więcej informacji pod adresem {{ other_provider.contact.website }}.
         {% endif %}
     </p>
-    <p>Koszt oferty podstawowej: {{ other_offer.min_cost }}.</p>
-
-    <p>
-        {% if other_offer.contact.website is not None %}
-            Więcej informacji pod adresem {{ other_offer.contact.website }}.
-        {% endif %}
-    </p>
-    <p>Numer telefonu: {{ other_offer.contact.phone_number }}</p>
+    <p>Numer telefonu: {{ other_provider.contact.phone_number }}</p>
     <p>
         {% if other_offer.contact.email is not None %}
-            Adres e-mail: {{ other_offer.contact.email }}
+            Adres e-mail: {{ other_provider.contact.email }}
         {% endif %}
     </p>
 
-
-    <p>
-        <a href="{% url 'main_system:take_offer' other_offer.id other_offer.name %}">Dodaj do moich ofert</a>
-    </p>
 
 
     {% with comments.count as total_comments %}

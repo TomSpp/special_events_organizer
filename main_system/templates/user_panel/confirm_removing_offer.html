@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="{% url 'main_system:remove_offer' offer.id offer.name %}"
+    <form action="{% url 'main_system:remove_offer' offer.id %}"
           method="post">
         {% csrf_token %}
         <p>Czy na pewno chcesz usunać wybraną ofertę?</p>

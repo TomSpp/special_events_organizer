@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Local, Catering, OtherOffer, Room
+from .models import Local, Catering, Offer, OtherProvider
 from taggit.models import Tag
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import FilterOffersForm, CommentForm, EstimationForm
@@ -18,7 +18,7 @@ def offer_list(request):
 
         locals = Local.objects.all()
         caterings = Catering.objects.all()
-        other_offers = OtherOffer.objects.all()
+        other_offers = OtherProvider.objects.all()
         offers = list()
 
         for local in locals:
@@ -50,7 +50,7 @@ def offer_list(request):
 
             locals = Local.objects.filter(location__district=filtered_location, tags__name__in=[tag])
             caterings = Catering.objects.filter(location__district=filtered_location, tags__name__in=[tag])
-            other_offers = OtherOffer.objects.filter(location__district=filtered_location, tags__name__in=[tag])
+            other_offers = OtherProvider.objects.filter(location__district=filtered_location, tags__name__in=[tag])
 
             for local in locals:
                 offers.append(local)
@@ -63,7 +63,7 @@ def offer_list(request):
                 town_offers = list()
                 locals = Local.objects.filter(location__town=filtered_location, tags__name__in=[tag])
                 caterings = Catering.objects.filter(location__town=filtered_location, tags__name__in=[tag])
-                other_offers = OtherOffer.objects.filter(location__town=filtered_location, tags__name__in=[tag])
+                other_offers = OtherProvider.objects.filter(location__town=filtered_location, tags__name__in=[tag])
                 for local in locals:
                     town_offers.append(local)
                 for catering in caterings:
@@ -75,7 +75,7 @@ def offer_list(request):
                     district = town_offers[0].location.district
                     locals = Local.objects.filter(location__district=district, tags__name__in=[tag])
                     caterings = Catering.objects.filter(location__district=district, tags__name__in=[tag])
-                    other_offers = OtherOffer.objects.filter(location__district=district, tags__name__in=[tag])
+                    other_offers = OtherProvider.objects.filter(location__district=district, tags__name__in=[tag])
                     for local in locals:
                         offers.append(local)
                     for catering in caterings:
@@ -93,34 +93,39 @@ def offer_list(request):
             except EmptyPage:
                 offers = paginator.page(paginator.num_pages)
 
-            return render(request, 'main_page/offer_list.html', {'page': page, 'offers': offers, 'form': form})
+            return render(request, 'main_page/offer_list.html', {'page': page, 'offers': offers,
+                                                                 'form': form})
 
 
 @login_required
-def offer_detail(request, id, name):
+def offer_detail(request, year, month, day, provider):
     new_comment = None
 
-    catering = Catering.objects.filter(id=id, name=name)
+    catering = Catering.objects.filter(slug=provider, added__year=year, added__month=month, added__day=day)
     if len(catering) == 0:
-        local = Local.objects.filter(id=id, name=name)
+        local = Local.objects.filter(slug=provider, added__year=year, added__month=month, added__day=day)
         if len(local) == 0:
-            other_offer = OtherOffer.objects.filter(id=id, name=name)
-            other_offer = other_offer[0]
-            comments = other_offer.comments.filter(active=True)
+            other_provider = OtherProvider.objects.filter(slug=provider, added__year=year,
+                                                          added__month=month, added__day=day)
+            other_provider = other_provider[0]
+            offers = Offer.objects.filter(other_provider=other_provider.id)
+            comments = other_provider.comments.filter(active=True)
             if request.method == 'POST':
                 comment_form = CommentForm(data=request.POST)
                 if comment_form.is_valid():
                     new_comment = comment_form.save(commit=False)
-                    new_comment.other_offer = other_offer
+                    new_comment.name = request.user.username
+                    new_comment.other_provider = other_provider
                     new_comment.save()
             else:
                 comment_form = CommentForm()
             return render(request, 'main_page/other_offer_detail.html',
-                          {'other_offer': other_offer, 'comments': comments, 'comment_form': comment_form,
-                           'new_comment': new_comment})
+                          {'other_provider': other_provider, 'comments': comments,
+                           'comment_form': comment_form, 'new_comment': new_comment,
+                           'offers': offers})
         else:
             local = local[0]
-            rooms = Room.objects.filter(local=local.id).order_by('max_people')
+            offers = Offer.objects.filter(local=local.id)
             comments = local.comments.filter(active=True)
             if request.method == 'POST':
                 comment_form = CommentForm(data=request.POST)
@@ -132,35 +137,36 @@ def offer_detail(request, id, name):
             else:
                 comment_form = CommentForm()
             return render(request, 'main_page/local_detail.html',
-                          {'local': local, 'rooms': rooms, 'comments': comments, 'comment_form': comment_form,
-                           'new_comment': new_comment})
+                          {'local': local, 'offers': offers, 'comments': comments,
+                           'comment_form': comment_form, 'new_comment': new_comment})
 
     catering = catering[0]
+    offers = Offer.objects.filter(catering=catering.id)
     comments = catering.comments.filter(active=True)
     if request.method == 'POST':
         comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False)
+            new_comment.name = request.user.username
             new_comment.catering = catering
             new_comment.save()
     else:
         comment_form = CommentForm()
     return render(request, 'main_page/catering_detail.html', {'catering': catering, 'comments': comments,
-                                                              'comment_form': comment_form, 'new_comment': new_comment})
+                                                              'offers': offers, 'comment_form': comment_form,
+                                                              'new_comment': new_comment})
 
 
 @login_required
-def take_room_offer(request, id, name, room_id):
-    local = Local.objects.filter(id=id, name=name)
-    local = local[0]
-    room = Room.objects.filter(id=room_id, local=local)
-    room = room[0]
+def take_offer(request, offer_id):
+    offer = Offer.objects.filter(id=offer_id)
+    offer = offer[0]
     profile = Profile.objects.get(user=request.user)
-    profile.rooms.add(room)
+    profile.offers.add(offer)
 
-    return render(request, 'user_panel/offer_added.html', {'offer': room})
+    return render(request, 'user_panel/offer_added.html', {'offer': offer})
 
-
+'''
 @login_required
 def remove_room_offer(request, room_id):
     profile = Profile.objects.get(user=request.user)
@@ -183,96 +189,57 @@ def take_offer(request, id, name):
         profile = Profile.objects.get(user=request.user)
         profile.other_offers.add(other_offer)
         return render(request, 'user_panel/offer_added.html',
-                          {'offer': other_offer})
+                      {'offer': other_offer})
 
     catering = catering[0]
     profile = Profile.objects.get(user=request.user)
     profile.caterings.add(catering)
 
     return render(request, 'user_panel/offer_added.html', {'offer': catering})
-
+'''
 
 @login_required
-def remove_offer(request, id, name):
-    catering = Catering.objects.filter(id=id, name=name)
-    if len(catering) == 0:
-        other_offer = OtherOffer.objects.filter(id=id, name=name)
-        other_offer = other_offer[0]
-        profile = Profile.objects.get(user=request.user)
-        if request.method == 'POST':
-            profile.other_offers.remove(other_offer)
-            messages.success(request, 'Wybrana oferta została usunięta.')
-            return redirect('main_system:user_panel')
+def remove_offer(request, offer_id):
+    offer = get_object_or_404(Offer, id=offer_id)
 
-        return render(request, 'user_panel/confirm_removing_offer.html', {'offer': other_offer})
-
-    catering = catering[0]
     profile = Profile.objects.get(user=request.user)
     if request.method == 'POST':
-        profile.caterings.remove(catering)
+        profile.offers.remove(offer)
         messages.success(request, 'Wybrana oferta została usunięta.')
         return redirect('main_system:user_panel')
 
-    return render(request, 'user_panel/confirm_removing_offer.html', {'offer': catering})
+    return render(request, 'user_panel/confirm_removing_offer.html', {'offer': offer})
 
 
 @login_required
 def user_panel(request):
     profile = Profile.objects.get(user=request.user)
-    rooms = profile.rooms.all()
-    caterings = profile.caterings.all()
-    other_offers = profile.other_offers.all()
+    offers = profile.offers.all()
 
-    offers = list()
-    room_offers = list()
-    for catering in caterings:
-        offers.append(catering)
-    for other_offer in other_offers:
-        offers.append(other_offer)
-    for room in rooms:
-        room_offers.append(room)
-
-    return render(request, 'user_panel/user_panel.html', {'offers': offers, 'room_offers': room_offers})
+    return render(request, 'user_panel/user_panel.html', {'offers': offers})
 
 
 @login_required
 def estimate_costs(request):
     profile = Profile.objects.get(user=request.user)
-    rooms = profile.rooms.all()
-    caterings = profile.caterings.all()
-    other_offers = profile.other_offers.all()
-    final_cost = None
+    offers = profile.offers.all()
+    final_cost = 0
 
     if request.method == 'POST':
         form = EstimationForm(data=request.POST)
         if form.is_valid():
             people_amount = form.cleaned_data['people_amount']
-            rooms = profile.rooms.all()
-            caterings = profile.caterings.all()
-            other_offers = profile.other_offers.all()
 
-            caterings_costs = 0
-            other_offer_costs = 0
-            rooms_costs = 0
+            for offer in offers:
+                if offer.catering is not None:
+                    final_cost += offer.cost * people_amount
+                else:
+                    final_cost += offer.cost
 
-            for catering in caterings:
-                caterings_costs += catering.min_cost_per_person
-            for other_offer in other_offers:
-                other_offer_costs += other_offer.min_cost
-            for room in rooms:
-                rooms_costs += room.cost
-
-            final_cost = people_amount * caterings_costs + other_offer_costs + rooms_costs
-
-            return render(request, 'user_panel/costs_counting.html', {'rooms': rooms,
-                                                                      'caterings': caterings,
-                                                                      'other_offers': other_offers,
-                                                                      'form': form,
+            return render(request, 'user_panel/costs_counting.html', {'form': form,
                                                                       'final_cost': final_cost})
     else:
         form = EstimationForm()
-        return render(request, 'user_panel/costs_counting.html', {'rooms': rooms,
-                                                                  'caterings': caterings,
-                                                                  'other_offers': other_offers,
+        return render(request, 'user_panel/costs_counting.html', {'offers': offers,
                                                                   'form': form,
                                                                   'final_cost': final_cost})
