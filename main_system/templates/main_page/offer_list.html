@@ -1,15 +1,24 @@
 {% extends "base.html" %}
+{% load bootstrap4 %}
 
-{% block content %}
+{% block page_header %}
     <p>
-        Wybierz uroczystość, jaką chcesz zorganizować, a następnie
-        podaj miasto lub powiat, w którym chcesz ją zorganizować:<br>
-        <form action="." method="post">
-        {{ form.as_p }}
+        Wybierz organizowaną uroczystość, a następnie
+        podaj miasto na terenie którego chcesz aby się odbyła (jeśli mieszkasz w mniejszej miejscowości
+        zalecane jest, abyś podał nazwę powiatu):<br>
+
+        <form action="." method="post" class="form">
+        {% bootstrap_form form %}
         {% csrf_token %}
-        <input type="submit" value="Filtruj">
+        {% buttons %}
+            <button name="submit" class="btn btn-primary">Wyszukaj</button>
+        {% endbuttons %}
     </form>
     </p>
+{% endblock %}
+
+{% block content %}
+
 
     <h3>Ostatnio dodane oferty:</h3>
     {% for offer in offers %}
