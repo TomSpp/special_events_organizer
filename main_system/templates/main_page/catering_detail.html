@@ -1,64 +1,79 @@
 {% extends "base.html" %}
+{% load bootstrap4 %}
 
-{% block content %}
-    <h1>{{ catering.name }}</h1>
-    <h2>{{ catering.location.street }} {{ catering.location.local_number}} {{ catering.location.town }}</h2>
+
+{% block page_header %}
+    <h2>{{ catering.name }}</h2>
+    <h3>{{ catering.location.street }} {{ catering.location.local_number}} {{ catering.location.town }}</h3>
 
     <p>
         {% if catering.with_local_only %}
             Ten katering jest ofertą jednego z lokali.
         {% endif %}
     </p>
+{% endblock %}
 
 
-    Oferty:
+{% block content %}
+    <h3>OFERTY</h3>
     {% for offer in offers %}
-        <p>
-            {{ offer.name }}<br>
-            {% if offer.offer_description %}
-                {{ offer.offer_description }}<br>
-            {% endif %}
-            Cena za jedną osobę: {{ offer.cost }} zł<br>
-            <a href="{% url 'main_system:take_offer' offer.id %}">Dodaj do moich ofert</a>
-        </p>
+        <div class="card mb-3">
+            <h4 class="card-header">
+                {{ offer.name }}<br>
+            </h4>
+            <div class="card-body">
+                <p>
+                    {% if offer.offer_description %}
+                        {{ offer.offer_description }}<br>
+                    {% endif %}
+                    Cena za jedną osobę: {{ offer.cost }} zł<br>
+                    <a href="{% url 'main_system:take_offer' offer.id %}">Dodaj do moich ofert</a>
+                </p>
+            </div>
+        </div>
+
     {% endfor %}
 
-
-    <p>
-        {% if catering.contact.website is not None %}
-            Więcej informacji pod adresem {{ catering.contact.website }}.
-        {% endif %}
-    </p>
+    <h3>KONTAKT</h3>
     <p>Numer telefonu: {{ catering.contact.phone_number }}</p>
     <p>
         {% if catering.contact.email is not None %}
             Adres e-mail: {{ catering.contact.email }}
         {% endif %}
     </p>
+    <p>
+        {% if catering.contact.website is not None %}
+            Więcej informacji pod adresem {{ catering.contact.website }}.
+        {% endif %}
+    </p>
+
 
 
     {% with comments.count as total_comments %}
-        <h4>
-            {{ total_comments }} komentarz{{ total_comments|pluralize:"y" }}
-        </h4>
+        <h3>KOMENTARZE ({{ total_comments }})</h3>
     {% endwith %}
 
     {% for comment in comments %}
-        <p>
-            Użytkownik {{ comment.name }} skomentował {{ comment.created }}
-        </p>
-        {{ comment.body|linebreaks }}
+        <div class="card mb-3">
+            <div class="card-header">
+                <small>Użytkownik {{ comment.name }} skomentował {{ comment.created }}</small>
+            </div>
+            <div class="card-body">
+                {{ comment.body|linebreaks }}
+            </div>
+        </div>
+
     {% empty %}
         <p>Nie ma jeszcze żadnych komentarzy.</p>
     {% endfor %}
-    {% if new_comment %}
-        <p>Twój komentarz został dodany.</p>
-    {% else %}
-        <h4>Dodaj nowy komentarz</h4>
-        <form action="." method="post">
-            {{ comment_form.as_p }}
-            {% csrf_token %}
-            <p><input type="submit" value="Dodaj komentarz"></p>
-        </form>
-    {% endif %}
-{% endblock %}
+
+
+    <h4>Dodaj nowy komentarz:</h4>
+    <form action="." method="post">
+        {% bootstrap_form comment_form %}
+        {% csrf_token %}
+        {% buttons %}
+            <button name="submit" class="btn btn-primary">Dodaj komentarz</button>
+        {% endbuttons %}
+    </form>
+    {% endblock %}

@@ -18,82 +18,82 @@ def offer_list(request):
 
         locals = Local.objects.all()
         caterings = Catering.objects.all()
-        other_offers = OtherProvider.objects.all()
-        offers = list()
+        other_providers= OtherProvider.objects.all()
+        providers = list()
 
         for local in locals:
-            offers.append(local)
+            providers.append(local)
         for catering in caterings:
-            offers.append(catering)
-        for other_offer in other_offers:
-            offers.append(other_offer)
+            providers.append(catering)
+        for other_provider in other_providers:
+            providers.append(other_provider)
 
-        offers.sort(key=lambda r: r.added, reverse=True)
-        paginator = Paginator(offers, 3)
+        providers.sort(key=lambda r: r.added, reverse=True)
+        paginator = Paginator(providers, 3)
         page = request.GET.get('page')
         try:
-            offers = paginator.page(page)
+            providers = paginator.page(page)
         except PageNotAnInteger:
-            offers = paginator.page(1)
+            providers = paginator.page(1)
         except EmptyPage:
-            offers = paginator.page(paginator.num_pages)
+            providers = paginator.page(paginator.num_pages)
 
-        return render(request, 'main_page/offer_list.html', {'page': page, 'offers': offers, 'form': form})
+        return render(request, 'main_page/offer_list.html', {'page': page, 'providers': providers, 'form': form})
 
     else:
         form = FilterOffersForm(request.POST)
         if form.is_valid():
-            offers = list()
+            providers = list()
             filtered_location = form.cleaned_data['filtered_location']
             filtered_event = form.cleaned_data['filtered_event']
             tag = get_object_or_404(Tag, name=filtered_event)
 
             locals = Local.objects.filter(location__district=filtered_location, tags__name__in=[tag])
             caterings = Catering.objects.filter(location__district=filtered_location, tags__name__in=[tag])
-            other_offers = OtherProvider.objects.filter(location__district=filtered_location, tags__name__in=[tag])
+            other_providers = OtherProvider.objects.filter(location__district=filtered_location, tags__name__in=[tag])
 
             for local in locals:
-                offers.append(local)
+                providers.append(local)
             for catering in caterings:
-                offers.append(catering)
-            for other_offer in other_offers:
-                offers.append(other_offer)
+                providers.append(catering)
+            for other_offer in other_providers:
+                providers.append(other_offer)
 
-            if len(offers) == 0:
-                town_offers = list()
+            if len(providers) == 0:
+                town_providers = list()
                 locals = Local.objects.filter(location__town=filtered_location, tags__name__in=[tag])
                 caterings = Catering.objects.filter(location__town=filtered_location, tags__name__in=[tag])
-                other_offers = OtherProvider.objects.filter(location__town=filtered_location, tags__name__in=[tag])
+                other_providers = OtherProvider.objects.filter(location__town=filtered_location, tags__name__in=[tag])
                 for local in locals:
-                    town_offers.append(local)
+                    town_providers.append(local)
                 for catering in caterings:
-                    town_offers.append(catering)
-                for other_offer in other_offers:
-                    town_offers.append(other_offer)
+                    town_providers.append(catering)
+                for other_provider in other_providers:
+                    town_providers.append(other_provider)
 
-                if len(town_offers):
-                    district = town_offers[0].location.district
+                if len(town_providers):
+                    district = town_providers[0].location.district
                     locals = Local.objects.filter(location__district=district, tags__name__in=[tag])
                     caterings = Catering.objects.filter(location__district=district, tags__name__in=[tag])
                     other_offers = OtherProvider.objects.filter(location__district=district, tags__name__in=[tag])
                     for local in locals:
-                        offers.append(local)
+                        providers.append(local)
                     for catering in caterings:
-                        offers.append(catering)
+                        providers.append(catering)
                     for other_offer in other_offers:
-                        offers.append(other_offer)
+                        providers.append(other_offer)
 
-            offers.sort(key=lambda r: r.added, reverse=True)
-            paginator = Paginator(offers, 3)
+            providers.sort(key=lambda r: r.added, reverse=True)
+            paginator = Paginator(providers, 3)
             page = request.GET.get('page')
             try:
-                offers = paginator.page(page)
+                providers = paginator.page(page)
             except PageNotAnInteger:
-                offers = paginator.page(1)
+                providers = paginator.page(1)
             except EmptyPage:
-                offers = paginator.page(paginator.num_pages)
+                providers = paginator.page(paginator.num_pages)
 
-            return render(request, 'main_page/offer_list.html', {'page': page, 'offers': offers,
+            return render(request, 'main_page/offer_list.html', {'page': page, 'providers': providers,
                                                                  'form': form})
 
 
@@ -119,7 +119,7 @@ def offer_detail(request, year, month, day, provider):
                     new_comment.save()
             else:
                 comment_form = CommentForm()
-            return render(request, 'main_page/other_offer_detail.html',
+            return render(request, 'main_page/other_provider_detail.html',
                           {'other_provider': other_provider, 'comments': comments,
                            'comment_form': comment_form, 'new_comment': new_comment,
                            'offers': offers})
@@ -150,6 +150,7 @@ def offer_detail(request, year, month, day, provider):
             new_comment.name = request.user.username
             new_comment.catering = catering
             new_comment.save()
+            messages.success(request, 'Twój komentarz został dodany')
     else:
         comment_form = CommentForm()
     return render(request, 'main_page/catering_detail.html', {'catering': catering, 'comments': comments,
@@ -166,37 +167,6 @@ def take_offer(request, offer_id):
 
     return render(request, 'user_panel/offer_added.html', {'offer': offer})
 
-'''
-@login_required
-def remove_room_offer(request, room_id):
-    profile = Profile.objects.get(user=request.user)
-    room = profile.rooms.get(id=room_id)
-    if request.method == 'POST':
-        profile.rooms.remove(room)
-
-        messages.success(request, 'Wybrana oferta została usunięta.')
-        return redirect('main_system:user_panel')
-
-    return render(request, 'user_panel/confirm_removing_room_offer.html', {'room': room})
-
-
-@login_required
-def take_offer(request, id, name):
-    catering = Catering.objects.filter(id=id, name=name)
-    if len(catering) == 0:
-        other_offer = OtherOffer.objects.filter(id=id, name=name)
-        other_offer = other_offer[0]
-        profile = Profile.objects.get(user=request.user)
-        profile.other_offers.add(other_offer)
-        return render(request, 'user_panel/offer_added.html',
-                      {'offer': other_offer})
-
-    catering = catering[0]
-    profile = Profile.objects.get(user=request.user)
-    profile.caterings.add(catering)
-
-    return render(request, 'user_panel/offer_added.html', {'offer': catering})
-'''
 
 @login_required
 def remove_offer(request, offer_id):
@@ -237,6 +207,7 @@ def estimate_costs(request):
                     final_cost += offer.cost
 
             return render(request, 'user_panel/costs_counting.html', {'form': form,
+                                                                      'offers': offers,
                                                                       'final_cost': final_cost})
     else:
         form = EstimationForm()

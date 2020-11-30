@@ -2,18 +2,13 @@
 {% load bootstrap4 %}
 
 {% block page_header %}
-    <h2>{{ local.name }}</h2>
-    <h3>{{ local.location.street }} {{ local.location.local_number}} {{ local.location.town }}</h3>
-
-    <p>
-        {% if local.catering is not None %}
-            W tym lokalu dostępny jest tylko i wyłącznie katering {{ local.catering.name }}.
-        {% endif %}
-    </p>
+    <h1>{{ other_provider.name }}</h1>
+    <h2>{{ other_provider.location.street }} {{ other_provider.location.local_number}}
+        {{ other_provider.location.town }}</h2>
 {% endblock %}
 
 {% block content %}
-    <h3>DOSTĘPNE SALE W LOKALU:</h3><br>
+    <h3>OFERTY</h3>
     {% for offer in offers %}
         <div class="card mb-3">
             <h4 class="card-header">
@@ -31,16 +26,15 @@
         </div>
     {% endfor %}
 
-    <h3>KONTAKT</h3>
-    <p>Numer telefonu: {{ local.contact.phone_number }}</p>
+    <p>Numer telefonu: {{ other_provider.contact.phone_number }}</p>
     <p>
-        {% if local.contact.email is not None %}
-            Adres e-mail: {{ local.contact.email }}
+        {% if other_offer.contact.email is not None %}
+            Adres e-mail: {{ other_provider.contact.email }}
         {% endif %}
     </p>
     <p>
-        {% if local.contact.website is not None %}
-            Więcej informacji pod adresem {{ local.contact.website }}.
+        {% if other_provider.contact.website is not None %}
+            Więcej informacji pod adresem {{ other_provider.contact.website }}.
         {% endif %}
     </p>
 

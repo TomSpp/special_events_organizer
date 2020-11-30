@@ -18,24 +18,24 @@
 {% endblock %}
 
 {% block content %}
-
-
-    <h3>Ostatnio dodane oferty:</h3>
-    {% for offer in offers %}
-        <p>
-            {{ offer }}<br>
-            {{ offer.location }} <br>
-            Tel. {{ offer.contact.phone_number }} <br>
-            {% if offer.contact.website %}
-                {{ offer.contact.website }}<br>
-            {% endif %}
-            {% if offer.contact.email %}
-                {{ offer.contact.email }}
-            {% endif %}
-            <a href="{{ offer.get_absolute_url }}">
-                Szczegóły
-            </a>
-        </p>
+    <h3>Ostatnio dodani dostawcy:</h3>
+    {% for provider in providers %}
+        <div class="card mb-3">
+            <h4 class="card-header">
+                {{ provider }}
+                <small><a href="{{ provider.get_absolute_url }}">Oferty</a> </small>
+            </h4>
+            <div class="card-body">
+                Adres: {{ provider.location }} <br>
+                Numer telefonu: {{ provider.contact.phone_number }} <br>
+                {% if provider.contact.website %}
+                    Internet: {{ provider.contact.website }}<br>
+                {% endif %}
+                {% if provider.contact.email %}
+                    E-mail: {{ provider.contact.email }}<br>
+                {% endif %}
+            </div>
+        </div>
     {% endfor %}
-    {% include "pagination.html" with page=offers %}
+    {% include "pagination.html" with page=providers %}
 {% endblock %}

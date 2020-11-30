@@ -1,29 +1,45 @@
 {% extends "base.html" %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+    <h3>Twoje oferty</h3>
+{% endblock %}
 
 {% block content %}
-    <h3>Twoje oferty:</h3>
     {% for offer in offers %}
-        {% if offer.local %}
-            {{ offer.local.name }}<br>
-            {{ offer.local.location }}<br>
-            {{ offer.local.contact }}<br>
-        {% elif offer.catering %}
-            {{ offer.catering.name }}<br>
-            {{ offer.catering.location }} <br>
-            {{ offer.catering.contact }}<br>
-        {% else %}
-            {{ offer.other_provider.name }}<br>
-            {{ offer.other_provider.location }} <br>
-            {{ offer.other_provider.contact }}<br>
-        {% endif %}
-            <p>
+        <div class="card mb-3">
+            {% if offer.local %}
                 {{ offer }}<br>
+                {{ offer.local.location }}<br>
                 {% if offer.offer_description %}
                     {{ offer.offer_description }}<br>
                 {% endif %}
+                Numer telefonu: {{ offer.local.contact.phone_number }}<br>
                 Koszt: {{ offer.cost }} zł.<br>
                 <a href="{% url 'main_system:remove_offer' offer.id %}">Usuń ofertę</a>
-            </p>
+            {% elif offer.catering %}
+                {{ offer }}<br>
+                {{ offer.catering.location }} <br>
+                {% if offer.offer_description %}
+                    {{ offer.offer_description }}<br>
+                {% endif %}
+                Numer telefonu: {{ offer.catering.contact.phone_number }}<br>
+                Koszt: {{ offer.cost }} zł dla jednej osoby.<br>
+                <a href="{% url 'main_system:remove_offer' offer.id %}">Usuń ofertę</a>
+            {% else %}
+                {{ offer }}<br>
+                {{ offer.other_provider.location }} <br>
+                {% if offer.offer_description %}
+                    {{ offer.offer_description }}<br>
+                {% endif %}
+                Numer telefonu: {{ offer.other_provider.contact.phone_number }}<br>
+                Koszt: {{ offer.cost }} zł.<br>
+                <a href="{% url 'main_system:remove_offer' offer.id %}">Usuń ofertę</a>
+            {% endif %}
+
+        </div>
+    {% empty %}
+        Nie wybrałeś jeszcze żadnej z ofert.
     {% endfor %}
 
     <p>
