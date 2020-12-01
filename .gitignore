@@ -2,6 +2,7 @@
 seo_env/
 __pycache__/
 *.sqlite3
+*.postgresql
 .idea/
 *.py[cod]
 *$py.class
