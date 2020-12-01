@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+    <h3>Zarejestrowano</h3>
+{% endblock %}
 
 {% block content %}
     <p>Twoje konto zostało utworzone. Możesz się już <a href="{% url 'account:login' %}">zalogować</a>. </p>

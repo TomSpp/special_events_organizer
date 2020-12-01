@@ -1,10 +1,14 @@
 {% extends "base.html" %}
+{% load bootstrap4 %}
 
 {% block content %}
-    <form action="{% url 'main_system:remove_offer' offer.id %}"
-          method="post">
+<form action="{% url 'main_system:remove_offer' offer.id %}"
+      method="post" xmlns="http://www.w3.org/1999/html">
         {% csrf_token %}
         <p>Czy na pewno chcesz usunać wybraną ofertę?</p>
-        <p><input type="submit" value="Tak" /> <a href="{% url 'main_system:user_panel' %}">Anuluj</a> </p>
+        {% buttons %}
+            <button name="submit" class="btn btn-primary">Tak</button>
+        {% endbuttons %}
+        <p><a href="{% url 'main_system:user_panel' %}">Anuluj</a></p>
     </form>
 {% endblock %}

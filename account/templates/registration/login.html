@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+    <h3>Logowanie</h3>
+{% endblock %}
 
 {% block content %}
     {% if form.errors %}
@@ -7,9 +12,11 @@
 
     <form method="post" action="{% url 'account:login' %}">
         {% csrf_token %}
-        {{ form.as_p }}
+        {% bootstrap_form form %}
+        {% buttons %}
+            <button name="submit" class="btn btn-primary">Zaloguj</button>
+        {% endbuttons %}
 
-        <button name="submit">Zaloguj</button>
         <input type="hidden" name="next" value="{% url 'main_system:offer_list' %}"/>
     </form>
     <p><a href="{% url 'account:password_reset' %}">Zapomniałeś hasła?</a> </p>

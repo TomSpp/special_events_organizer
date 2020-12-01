@@ -1,11 +1,17 @@
 {% extends "base.html" %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+    <h3>Utwórz konto</h3>
+{% endblock %}
 
 {% block content %}
-    <h1>Utwórz konto</h1>
     <p>Wypełnij poniższy formularz, aby się zarejestrować:</p>
     <form action="." method="post">
-        {{ user_form.as_p }}
+        {% bootstrap_form user_form %}
         {% csrf_token %}
-        <p><input type="submit" value="Utwórz konto"></p>
+        {% buttons %}
+            <button name="submit" class="btn btn-primary">Utwórz konto</button>
+        {% endbuttons %}
     </form>
 {% endblock %}
