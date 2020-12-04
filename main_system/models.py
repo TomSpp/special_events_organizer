@@ -4,7 +4,6 @@ from taggit.managers import TaggableManager
 
 
 class Location(models.Model):
-    voivodeship = models.CharField(max_length=100)
     district = models.CharField(max_length=100)
     town = models.CharField(max_length=100)
     street = models.CharField(max_length=100)
@@ -16,7 +15,7 @@ class Location(models.Model):
 
 class Contact(models.Model):
     phone_number = models.CharField(max_length=20)
-    website = models.URLField(max_length=100, null=True, blank=True)
+    website = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=100, null=True, blank=True)
 
     def __str__(self):
@@ -41,8 +40,9 @@ class Catering(models.Model):
     tags = TaggableManager()
 
     def get_absolute_url(self):
-        return reverse('main_system:offer_detail', args=[self.added.year, self.added.month,
-                                                         self.added.day, self.slug])
+        return reverse('main_system:offer_detail',
+                       args=[self.added.year, self.added.month,
+                       self.added.day, self.slug])
 
     def __str__(self):
         return self.name
