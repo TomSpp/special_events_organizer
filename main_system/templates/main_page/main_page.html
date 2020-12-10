@@ -12,10 +12,10 @@
             do wybranych ofert.
         </p>
 
-        <a class="btn btn-lg btn-primary" href="{% url 'main_system:offer_list' %}"
+        <a class="btn btn-lg btn-secondary" href="{% url 'main_system:offer_list' %}"
            role="button">Przejdź do wyszukiwania &raquo;</a>
 
-        <a class="btn btn-lg btn-primary" href="{% url 'account:register' %}"
+        <a class="btn btn-lg btn-secondary" href="{% url 'account:register' %}"
            role="button">Załóż konto &raquo;</a>
     </div>
 
@@ -23,9 +23,11 @@
 {% endblock %}
 
 {% block content %}
-    <p>
-        Chcesz zamieścić ofertę swojej działalności w serwisie? Skontaktuj się z nami:<br>
-        e-mail: admin@serwis.pl<br>
-        telefon: 222444444
-    </p>
+    <div class="container">
+        <p>
+            Chcesz zamieścić ofertę swojej działalności w serwisie? Skontaktuj się z nami:<br>
+            e-mail: admin@serwis.pl<br>
+            numer telefonu: 222444444
+        </p>
+    </div>
 {% endblock %}

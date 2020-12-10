@@ -8,35 +8,48 @@
 {% block content %}
     {% for offer in offers %}
         <div class="card mb-3">
-            {% if offer.local %}
-                {{ offer }}<br>
-                {{ offer.local.location }}<br>
-                {% if offer.offer_description %}
-                    {{ offer.offer_description }}<br>
+            <div class="card-body">
+                {% if offer.local %}
+                    <div class="card-title">
+                        <h4>{{ offer }}</h4>
+                    </div>
+                    <div class="card-subtitle">
+                        <h6 class="text-muted">{{ offer.local.location }}</h6>
+                    </div>
+                    {% if offer.offer_description %}
+                        {{ offer.offer_description }}<br>
+                    {% endif %}
+                    Numer telefonu: {{ offer.local.contact.phone_number }}<br>
+                    Koszt: {{ offer.cost }} zł.<br>
+                    <a href="{% url 'main_system:remove_offer' offer.id %}">Usuń ofertę</a>
+                {% elif offer.catering %}
+                    <div class="card-title">
+                        <h4>{{ offer }}</h4>
+                    </div>
+                    <div class="card-subtitle">
+                        <h6 class="text-muted">{{ offer.catering.location }}</h6>
+                    </div>
+                    {% if offer.offer_description %}
+                        {{ offer.offer_description }}<br>
+                    {% endif %}
+                    Numer telefonu: {{ offer.catering.contact.phone_number }}<br>
+                    Koszt: {{ offer.cost }} zł dla jednej osoby.<br>
+                    <a href="{% url 'main_system:remove_offer' offer.id %}">Usuń ofertę</a>
+                {% else %}
+                    <div class="card-title">
+                        <h4>{{ offer }}</h4>
+                    </div>
+                    <div class="card-subtitle">
+                        <h6 class="text-muted">{{ offer.other_provider.location }}</h6>
+                    </div>
+                    {% if offer.offer_description %}
+                        {{ offer.offer_description }}<br>
+                    {% endif %}
+                    Numer telefonu: {{ offer.other_provider.contact.phone_number }}<br>
+                    Koszt: {{ offer.cost }} zł.<br>
+                    <a href="{% url 'main_system:remove_offer' offer.id %}">Usuń ofertę</a>
                 {% endif %}
-                Numer telefonu: {{ offer.local.contact.phone_number }}<br>
-                Koszt: {{ offer.cost }} zł.<br>
-                <a href="{% url 'main_system:remove_offer' offer.id %}">Usuń ofertę</a>
-            {% elif offer.catering %}
-                {{ offer }}<br>
-                {{ offer.catering.location }} <br>
-                {% if offer.offer_description %}
-                    {{ offer.offer_description }}<br>
-                {% endif %}
-                Numer telefonu: {{ offer.catering.contact.phone_number }}<br>
-                Koszt: {{ offer.cost }} zł dla jednej osoby.<br>
-                <a href="{% url 'main_system:remove_offer' offer.id %}">Usuń ofertę</a>
-            {% else %}
-                {{ offer }}<br>
-                {{ offer.other_provider.location }} <br>
-                {% if offer.offer_description %}
-                    {{ offer.offer_description }}<br>
-                {% endif %}
-                Numer telefonu: {{ offer.other_provider.contact.phone_number }}<br>
-                Koszt: {{ offer.cost }} zł.<br>
-                <a href="{% url 'main_system:remove_offer' offer.id %}">Usuń ofertę</a>
-            {% endif %}
-
+            </div>
         </div>
     {% empty %}
         Nie wybrałeś jeszcze żadnej z ofert.

@@ -3,7 +3,7 @@
 
 {% block page_header %}
     <h2>{{ local.name }}</h2>
-    <h3>{{ local.location.street }} {{ local.location.local_number}} {{ local.location.town }}</h3>
+    <h5>{{ local.location.street }} {{ local.location.local_number}} {{ local.location.town }}</h5>
 
     <p>
         {% if local.catering is not None %}
@@ -13,63 +13,83 @@
 {% endblock %}
 
 {% block content %}
-    <h3>DOSTĘPNE SALE W LOKALU:</h3><br>
-    {% for offer in offers %}
-        <div class="card mb-3">
-            <h4 class="card-header">
-                {{ offer.name }}<br>
-            </h4>
-            <div class="card-body">
-                <p>
-                    {% if offer.offer_description %}
-                        {{ offer.offer_description }}<br>
+    <div class="card mb-3">
+        <h4 class="card-header">
+            SALE DOSTĘPNE W LOKALU
+        </h4>
+        <div class="card-body">
+            {% for offer in offers %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ offer.name }}<br>
+                    </h5>
+                    <p>
+                        {% if offer.offer_description %}
+                            {{ offer.offer_description }}<br>
+                        {% endif %}
+                        Maksymalna pojemność sali: {{ offer.max_people }} osób<br>
+                        Cena: {{ offer.cost }} zł<br>
+                        <a href="{% url 'main_system:take_offer' offer.id %}">Dodaj do moich ofert</a>
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <h4 class="card-header">
+            KONTAKT
+        </h4>
+        <div class="card-body">
+            <div class="card-text">
+                <table class="table table-sm table-bordered">
+                    <tr><td>Numer telefonu</td><td>{{ local.contact.phone_number }}</td></tr>
+                    {% if local.contact.email %}
+                        <tr><td>E-mail</td><td>{{ local.contact.email }}</td></tr>
                     {% endif %}
-                    Cena: {{ offer.cost }} zł<br>
-                    <a href="{% url 'main_system:take_offer' offer.id %}">Dodaj do moich ofert</a>
-                </p>
+                    {% if local.contact.website %}
+                        <tr><td>Internet</td><td>{{ local.contact.website }}</td></tr>
+                    {% endif %}
+                </table>
             </div>
         </div>
-    {% endfor %}
-
-    <h3>KONTAKT</h3>
-    <p>Numer telefonu: {{ local.contact.phone_number }}</p>
-    <p>
-        {% if local.contact.email is not None %}
-            Adres e-mail: {{ local.contact.email }}
-        {% endif %}
-    </p>
-    <p>
-        {% if local.contact.website is not None %}
-            Więcej informacji pod adresem {{ local.contact.website }}.
-        {% endif %}
-    </p>
+    </div>
 
 
-    {% with comments.count as total_comments %}
-        <h3>KOMENTARZE ({{ total_comments }})</h3>
-    {% endwith %}
+    <div class="card mb-3">
+        <h4 class="card-header">
+            {% with comments.count as total_comments %}
+                KOMENTARZE ({{ total_comments }})
+            {% endwith %}
+        </h4>
+        <div class="card-body">
+        {% for comment in comments %}
+            <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <small>Użytkownik {{ comment.name }} skomentował {{ comment.created }}:</small>
+                        </div>
+                        <div class="card-text">
+                            {{ comment.body|linebreaks }}
+                        </div>
+                    </div>
+                </div>
 
-    {% for comment in comments %}
-        <div class="card mb-3">
-            <div class="card-header">
-                <small>Użytkownik {{ comment.name }} skomentował {{ comment.created }}</small>
-            </div>
-            <div class="card-body">
-                {{ comment.body|linebreaks }}
-            </div>
+            {% empty %}
+                <p>Nie ma jeszcze żadnych komentarzy.</p>
+            {% endfor %}
+
+
+            <h4>Dodaj nowy komentarz:</h4>
+            <form action="." method="post">
+                {% bootstrap_form comment_form %}
+                {% csrf_token %}
+                {% buttons %}
+                    <button name="submit" class="btn btn-primary">Dodaj komentarz</button>
+                {% endbuttons %}
+            </form>
         </div>
-
-    {% empty %}
-        <p>Nie ma jeszcze żadnych komentarzy.</p>
-    {% endfor %}
-
-
-    <h4>Dodaj nowy komentarz:</h4>
-    <form action="." method="post">
-        {% bootstrap_form comment_form %}
-        {% csrf_token %}
-        {% buttons %}
-            <button name="submit" class="btn btn-primary">Dodaj komentarz</button>
-        {% endbuttons %}
-    </form>
+    </div>
 {% endblock %}

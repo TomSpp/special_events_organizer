@@ -206,11 +206,7 @@ def estimate_costs(request):
                 else:
                     final_cost += offer.cost
 
-            return render(request, 'user_panel/costs_counting.html', {'form': form,
-                                                                      'offers': offers,
-                                                                      'final_cost': final_cost})
+            return render(request, 'user_panel/costs_counting.html', {'form': form, 'offers': offers, 'final_cost': final_cost})
     else:
         form = EstimationForm()
-        return render(request, 'user_panel/costs_counting.html', {'offers': offers,
-                                                                  'form': form,
-                                                                  'final_cost': final_cost})
+        return render(request, 'user_panel/costs_counting.html', {'offers': offers, 'form': form, 'final_cost': final_cost})

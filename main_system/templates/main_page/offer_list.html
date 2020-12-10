@@ -11,14 +11,19 @@
         {% bootstrap_form form %}
         {% csrf_token %}
         {% buttons %}
-            <button name="submit" class="btn btn-primary">Wyszukaj</button>
+            <button name="submit" class="btn btn-secondary">Wyszukaj</button>
         {% endbuttons %}
     </form>
     </p>
 {% endblock %}
 
 {% block content %}
-    <h3>Ostatnio dodani dostawcy:</h3>
+    {% if request.method == 'GET' %}
+        <h3>Ostatnio dodani dostawcy:</h3>
+    {% else %}
+        <h3>Wyszukani dostawcy:</h3>
+    {% endif %}
+
     {% for provider in providers %}
         <div class="card mb-3">
             <h4 class="card-header">
@@ -26,14 +31,22 @@
                 <small><a href="{{ provider.get_absolute_url }}">Oferty</a> </small>
             </h4>
             <div class="card-body">
-                Adres: {{ provider.location }} <br>
-                Numer telefonu: {{ provider.contact.phone_number }} <br>
-                {% if provider.contact.website %}
-                    Internet: {{ provider.contact.website }}<br>
-                {% endif %}
-                {% if provider.contact.email %}
-                    E-mail: {{ provider.contact.email }}<br>
-                {% endif %}
+                <div class="card-text">
+                    <table class="table table-sm table-bordered">
+                        <tr><td>Adres</td><td>{{ provider.location }}</td></tr>
+                        <tr><td>Numer telefonu</td><td>{{ provider.contact.phone_number }}</td></tr>
+                        {% if provider.contact.email %}
+                        <tr><td>E-mail</td><td>{{ provider.contact.email }}</td></tr>
+                        {% endif %}
+                        {% if provider.contact.website %}
+                        <tr><td>Internet</td><td>{{ provider.contact.website }}</td></tr>
+                        {% endif %}
+                    </table>
+
+                </div>
+                <div class="card-text text-right text-small">
+                    Dodano: {{ provider.added }}
+                </div>
             </div>
         </div>
     {% endfor %}

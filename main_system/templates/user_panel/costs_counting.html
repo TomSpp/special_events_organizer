@@ -9,10 +9,15 @@
 {% endblock %}
 
 {% block content %}
-    <table class="table table-dark">
+    <table class="table table-striped">
         {% for offer in offers %}
             <tr>
-                <td>{{ forloop.counter }}.</td><td>{{ offer }}</td><td>{{ offer.cost }} zł</td>
+                <td>{{ forloop.counter }}.</td><td>{{ offer }}</td>
+                {% if offer.catering %}
+                   <td> {{ offer.cost }} zł / osobę</td>
+                {% else %}
+                    <td> {{ offer.cost }} zł</td>
+                {% endif %}
             </tr>
         {% endfor %}
     </table>
@@ -22,7 +27,7 @@
             {% bootstrap_form form %}
             {% csrf_token %}
             {% buttons %}
-                <button name="submit" class="btn btn-primary">Oblicz łączny koszt</button>
+                <button name="submit" class="btn btn-secondary">Oblicz łączny koszt</button>
             {% endbuttons %}
         </form>
     {% else %}
