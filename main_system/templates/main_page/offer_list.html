@@ -2,16 +2,16 @@
 {% load bootstrap4 %}
 
 {% block page_header %}
-    <p>
-        Wybierz organizowaną uroczystość, a następnie
-        podaj miasto na terenie którego chcesz aby się odbyła (jeśli mieszkasz w mniejszej miejscowości
-        zalecane jest, abyś podał nazwę powiatu):<br>
 
+        <h5>Wybierz organizowaną uroczystość, a następnie
+        podaj miasto na terenie którego chcesz aby się odbyła (jeśli mieszkasz w mniejszej miejscowości
+            zalecane jest, abyś podał nazwę powiatu):</h5>
+    <p>
         <form action="." method="post" class="form">
         {% bootstrap_form form %}
         {% csrf_token %}
         {% buttons %}
-            <button name="submit" class="btn btn-secondary">Wyszukaj</button>
+            <button name="submit" class="btn btn-primary">Wyszukaj</button>
         {% endbuttons %}
     </form>
     </p>

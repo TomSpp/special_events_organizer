@@ -3,9 +3,10 @@
 
 {% block page_header %}
     <h3>Podsumowanie kosztów</h3>
-    <p>Poniższa tabela przedstawia koszt każdej z wybranych przez Ciebie ofert. Koszty kateringów i
-    cukierni to koszty posiłków dla jednej osoby. Wypełnij poniższy formularz abyśmy mogli obliczyć całkowity
-        koszt Twojej uroczystości.</p>
+    <h6>Poniższa tabela przedstawia koszt każdej z wybranych przez Ciebie ofert.
+        Koszty kateringów i cukierni to koszty posiłków dla jednej osoby.
+        Wypełnij poniższy formularz abyśmy mogli obliczyć całkowity
+        koszt Twojej uroczystości.</h6>
 {% endblock %}
 
 {% block content %}
@@ -22,15 +23,15 @@
         {% endfor %}
     </table>
     {% if final_cost == 0 %}
-        Podaj przewidywaną liczbę osób biorących udział w uroczystości:
+    <h6>Podaj przewidywaną liczbę osób biorących udział w uroczystości:</h6>
         <form action="." method="post">
             {% bootstrap_form form %}
             {% csrf_token %}
             {% buttons %}
-                <button name="submit" class="btn btn-secondary">Oblicz łączny koszt</button>
+                <button name="submit" class="btn btn-primary">Oblicz łączny koszt</button>
             {% endbuttons %}
         </form>
     {% else %}
-        Koszt wybranych przez Ciebie ofert to {{ final_cost }} zł.
+    <h6>Koszt wybranych przez Ciebie ofert to {{ final_cost }} zł.</h6>
     {% endif %}
 {% endblock %}

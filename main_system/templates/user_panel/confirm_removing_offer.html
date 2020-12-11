@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 {% load bootstrap4 %}
 
+{% block page_header %}
+    <h6>Czy na pewno chcesz usunać wybraną ofertę?</h6>
+{% endblock %}
+
 {% block content %}
 <form action="{% url 'main_system:remove_offer' offer.id %}"
       method="post" xmlns="http://www.w3.org/1999/html">
         {% csrf_token %}
-        <p>Czy na pewno chcesz usunać wybraną ofertę?</p>
+
         {% buttons %}
             <button name="submit" class="btn btn-primary">Tak</button>
         {% endbuttons %}

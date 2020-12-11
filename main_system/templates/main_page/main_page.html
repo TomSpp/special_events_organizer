@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block page_header%}
-    <div class="jumbotron">
+    <div class="jumbotron ">
         <h3>Zorganizuj uroczystość nie wychodząc z domu!</h3>
 
         <p>
@@ -12,14 +12,12 @@
             do wybranych ofert.
         </p>
 
-        <a class="btn btn-lg btn-secondary" href="{% url 'main_system:offer_list' %}"
+        <a class="btn btn-lg btn-primary" href="{% url 'main_system:offer_list' %}"
            role="button">Przejdź do wyszukiwania &raquo;</a>
 
-        <a class="btn btn-lg btn-secondary" href="{% url 'account:register' %}"
+        <a class="btn btn-lg btn-primary" href="{% url 'account:register' %}"
            role="button">Załóż konto &raquo;</a>
     </div>
-
-
 {% endblock %}
 
 {% block content %}

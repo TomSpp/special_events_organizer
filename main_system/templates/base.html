@@ -24,7 +24,7 @@
             <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main_system:user_panel' %}">Moje oferty</a>
+                    <a class="nav-link text-white" href="{% url 'main_system:user_panel' %}">Moje oferty</a>
                 </li>
                 {% endif %}
             </ul>
@@ -32,20 +32,20 @@
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <span class="navbar-text">Witaj, {{ user.username }}.</span>
+                    <span class="navbar-text text-white">Witaj, {{ user.username }}.</span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'account:password_change' %}">Zmień hasło</a>
+                    <a class="nav-link text-white" href="{% url 'account:password_change' %}">Zmień hasło</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'account:logout' %}">Wyloguj</a>
+                    <a class="nav-link text-white" href="{% url 'account:logout' %}">Wyloguj</a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'account:login' %}">Zaloguj</a>
+                    <a class="nav-link text-white" href="{% url 'account:login' %}">Zaloguj</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'account:register' %}">Zarejestruj</a>
+                    <a class="nav-link text-white" href="{% url 'account:register' %}">Zarejestruj</a>
                 </li>
                 {% endif %}
             </ul>

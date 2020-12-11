@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    <p>Wypełnij poniższy formularz, aby się zarejestrować:</p>
+    <h6>Wypełnij poniższy formularz, aby się zarejestrować:</h6>
     <form action="." method="post">
         {% bootstrap_form user_form %}
         {% csrf_token %}
